@@ -22,7 +22,7 @@
                 <em>User</em>
               </template>
               <b-dropdown-item to="/user">Profile</b-dropdown-item>
-              <b-dropdown-item href="/">Sign Out</b-dropdown-item>
+              <b-dropdown-item v-on:click="logout">Sign Out</b-dropdown-item>
             </b-nav-item-dropdown>
           </b-navbar-nav>
         </b-collapse>
@@ -37,6 +37,16 @@
 
 export default {
   name: 'App',
+  methods: {
+    logout(){
+      this.$cookies.remove('uid')
+      this.$cookies.remove('access_token')
+      this.$cookies.remove('refresh_token')
+      this.$cookies.remove('username')
+      this.$cookies.remove('email')
+      location.reload()
+    }
+  }
 }
 </script>
 
