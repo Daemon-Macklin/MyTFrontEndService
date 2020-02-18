@@ -66,6 +66,7 @@ export default {
           let rt_decoded = JSON.parse(window.atob(rt_base64))
           if (current_time > rt_decoded.exp){
             // Refresh token is expired
+            this.flashMessage.error({title: 'Auth Error', message: 'Token Invalid - Please Login Again'})
             this.logout()
           } else {
             console.log("Refreshing Token")
@@ -96,7 +97,6 @@ export default {
     },
     logout(){
       console.log("Logout")
-      this.flashMessage.error({title: 'Auth Error', message: 'Token Invalid - Please Login Again'})
       this.$cookies.remove('uid')
       this.$cookies.remove('access_token')
       this.$cookies.remove('refresh_token')

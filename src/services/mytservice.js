@@ -20,5 +20,13 @@ export default {
     createAWSCreds(data, token){
       return Api().post('credentials/create/aws', data,
           {headers: {'Authorization': 'Bearer '+token}})
+    },
+    getCreds(uid, token){
+       return Api().get('credentials/get/'+uid,
+           {headers: {'Authorization': 'Bearer '+token}})
+    },
+    removeCred(type, id, token){
+        return Api().delete('credentials/remove/'+ type +'/' + id,
+            {headers: {'Authorization': 'Bearer '+token}})
     }
 }

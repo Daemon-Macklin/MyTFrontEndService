@@ -13,7 +13,8 @@
     "core-js": "^3.6.4",
     "vue": "^2.6.11",
     "vue-cookies": "^1.6.1",
-    "vue-form": "^4.10.3"
+    "vue-form": "^4.10.3",
+    "vue-tables-2": "^2.0.0"
   },
   "devDependencies": {
     "@smartweb/vue-flash-message": "^0.6.2",
