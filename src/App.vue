@@ -74,6 +74,7 @@ export default {
                             response =>{
                               console.log(response)
                               this.$cookies.set('access_token', response.data.access_token)
+                              this.signedIn = true
                             }
                     ).catch(
                     error => {
@@ -95,7 +96,7 @@ export default {
     },
     logout(){
       console.log("Logout")
-      this.flashMessage.success({title: 'Auth Error', message: 'Token Invalid - Please Login Again'})
+      this.flashMessage.error({title: 'Auth Error', message: 'Token Invalid - Please Login Again'})
       this.$cookies.remove('uid')
       this.$cookies.remove('access_token')
       this.$cookies.remove('refresh_token')

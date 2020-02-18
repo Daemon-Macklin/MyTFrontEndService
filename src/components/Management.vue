@@ -11,9 +11,9 @@
             </b-navbar-nav>
         </b-navbar>
         <br>
-            <Platform v-if="show==='platform'"/>
-            <Space v-if="show==='space'"/>
-            <Credentials v-if="show==='credentials'"/>
+            <Platform v-bind:user="user" v-if="show==='platform'"/>
+            <Space v-bind:user="user" v-if="show==='space'"/>
+            <Credentials v-bind:user="user" v-if="show==='credentials'"/>
             <User v-bind:user="user" v-if="show==='user'"/>
         </div>
     </div>

@@ -12,7 +12,8 @@
     "bootstrap-vue": "^2.4.2",
     "core-js": "^3.6.4",
     "vue": "^2.6.11",
-    "vue-cookies": "^1.6.1"
+    "vue-cookies": "^1.6.1",
+    "vue-form": "^4.10.3"
   },
   "devDependencies": {
     "@smartweb/vue-flash-message": "^0.6.2",

@@ -13,11 +13,12 @@ export default {
             {headers: {'Authorization': 'Bearer '+token}})
     },
     getKeys(uid, password, token){
-        let json = {
-            "password": password
-        }
-        console.log(uid)
+        let json = {"password": password}
         return Api().post("/users/sshKey/"+uid, json,
             {headers: {'Authorization': 'Bearer '+token}})
+    },
+    createAWSCreds(data, token){
+      return Api().post('credentials/create/aws', data,
+          {headers: {'Authorization': 'Bearer '+token}})
     }
 }
