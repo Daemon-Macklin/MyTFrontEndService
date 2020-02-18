@@ -17,6 +17,7 @@
 
     Vue.use(Cookies)
     Vue.use(FlashMessage)
+    Vue.use(LoginForm)
 
 
     export default {
@@ -28,7 +29,7 @@
             return {
                 loginFormData: {
                     title: "Account Login",
-                    form: true,
+                    form: false,
                     buttonText: "SIGN IN",
                     inputList:[
                         {
@@ -51,7 +52,7 @@
                 },
                 registerFormData: {
                     title: "Account Register",
-                    form: true,
+                    form: false,
                     buttonText: "REGISTER",
                     inputList:[
                         {
@@ -83,6 +84,12 @@
         },
         methods : {
             signIn(res) {
+
+                if(res.email === "" || res.password === ""){
+                    this.flashMessage.error({title: 'Login Error', message: "All Fields must be filled"});
+                    return
+                }
+
                 let json = {
                    email: res.email,
                    password: res.password
@@ -110,6 +117,11 @@
                 )
             },
             register(res){
+
+                if(res.reg_email === "" || res.reg_password === "" || res.reg_username === ""){
+                    this.flashMessage.error({title: 'Register Error', message: "All Fields must be filled"});
+                    return
+                }
                 let json = {
                     email: res.reg_email,
                     password: res.reg_password,
@@ -121,7 +133,6 @@
                         let user = response.data
                         if(user.success === true){
                             console.log(response.data)
-                            this.signedIn = true
                             this.$cookies.set('uid', user.uid.toString())
                             this.$cookies.set('access_token', user.access_token.toString())
                             this.$cookies.set('refresh_token', user.refresh_token.toString())
@@ -134,7 +145,7 @@
                     error => {
                         let err = error.response.data.errors.message
                         console.log(err)
-                        this.flashMessage.error({title: 'Login Error', message: err});
+                        this.flashMessage.error({title: 'Register Error', message: err});
                     }
                 )
             }

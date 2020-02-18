@@ -62,7 +62,7 @@
                             let blob = new Blob([response.data.privateKey.toString() + "\n" + response.data.publicKey.toString()], {type: "text/plain;charset=utf-8"})
                             console.log(blob)
                             try {
-                                saveAs(blob, "key.txt")
+                                saveAs(blob, this.user.username + "-key.txt")
                             } catch (e) {
                                 console.log(e)
                             }

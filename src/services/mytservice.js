@@ -9,7 +9,7 @@ export default {
         return Api().post("/users/create", data)
     },
     refreshToken(token){
-        return Api().get("/users/login",
+        return Api().get("/refresh",
             {headers: {'Authorization': 'Bearer '+token}})
     },
     getKeys(uid, password, token){

@@ -52,12 +52,19 @@ export default {
 
     isSignedIn(){
       let access_token = this.$cookies.get('access_token')
-      let refresh_token = this.$cookies.get('access_token')
+      let refresh_token = this.$cookies.get('refresh_token')
+      console.log(access_token)
       if (access_token != null && refresh_token != null){
-        var current_time = new Date().getTime() / 1000;
-        if (current_time > access_token.exp) {
+        let current_time = new Date().getTime() / 1000;
+
+        let at_base64 = access_token.split('.')[1]
+        let at_decoded = JSON.parse(window.atob(at_base64))
+
+        if (current_time > at_decoded.exp) {
           // Access token is expired
-          if (current_time > refresh_token.exp){
+          let rt_base64 = refresh_token.split('.')[1]
+          let rt_decoded = JSON.parse(window.atob(rt_base64))
+          if (current_time > rt_decoded.exp){
             // Refresh token is expired
             this.logout()
           } else {
@@ -80,13 +87,15 @@ export default {
           this.user.username = this.$cookies.get('username')
           this.user.email = this.$cookies.get('email')
           this.user.uid = this.$cookies.get('uid')
-          this.flashMessage.success({title: 'Login Successful', message: 'Welcome ' + this.user.username})
+          this.flashMessage.success({title: 'Verification Successful', message: 'Welcome ' + this.user.username})
         }
       } else {
          console.log("No User logged in")
       }
     },
     logout(){
+      console.log("Logout")
+      this.flashMessage.success({title: 'Auth Error', message: 'Token Invalid - Please Login Again'})
       this.$cookies.remove('uid')
       this.$cookies.remove('access_token')
       this.$cookies.remove('refresh_token')
