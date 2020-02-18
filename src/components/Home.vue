@@ -11,6 +11,21 @@
 <script>
 export default {
   name: 'Home',
+  user : {
+    username: null,
+    email: null,
+    uid: null
+  },
+  created() {
+    this.getUserData()
+  },
+  methods: {
+    getUserData() {
+      this.user.username = this.$cookies.get('username')
+      this.user.email = this.$cookies.get('email')
+      this.user.uid = this.$cookies.get('uid')
+    }
+  }
 }
 </script>
 
