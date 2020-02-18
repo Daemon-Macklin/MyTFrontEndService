@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <div>
+    <div id="app">
+        <div id="section" class="ui raised centered segment">
         <b-navbar type="light" variant="info">
             <b-navbar-nav>
             <b-nav-item v-on:click="showSelection('platform')"> Platforms </b-nav-item>
@@ -10,13 +10,11 @@
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
             </b-navbar-nav>
         </b-navbar>
-        </div>
         <br>
-        <div class="ui raised centered segment">
             <Platform v-if="show==='platform'"/>
             <Space v-if="show==='space'"/>
             <Credentials v-if="show==='credentials'"/>
-            <User v-if="show==='user'"/>
+            <User v-bind:user="user" v-if="show==='user'"/>
         </div>
     </div>
 </template>
@@ -39,14 +37,25 @@
                 }
             }
         },
+        mounted() {
+            this.getUserData()
+        },
         methods: {
             showSelection(page){
                 this.show = page
+            },
+            getUserData() {
+                this.user.username = this.$cookies.get('username')
+                this.user.email = this.$cookies.get('email')
+                this.user.uid = this.$cookies.get('uid')
             }
         }
     }
 </script>
 
 <style scoped>
-
+    #section {
+        margin-left: 5%;
+        margin-right: 5%;
+    }
 </style>

@@ -93,7 +93,6 @@
                         let user = response.data
                         if(user.success === true){
                             console.log(response.data)
-                            this.signedIn = true
                             this.$cookies.set('uid', user.uid.toString())
                             this.$cookies.set('access_token', user.access_token.toString())
                             this.$cookies.set('refresh_token', user.refresh_token.toString())

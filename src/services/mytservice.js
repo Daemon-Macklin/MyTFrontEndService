@@ -11,5 +11,13 @@ export default {
     refreshToken(token){
         return Api().get("/users/login",
             {headers: {'Authorization': 'Bearer '+token}})
+    },
+    getKeys(uid, password, token){
+        let json = {
+            "password": password
+        }
+        console.log(uid)
+        return Api().post("/users/sshKey/"+uid, json,
+            {headers: {'Authorization': 'Bearer '+token}})
     }
 }

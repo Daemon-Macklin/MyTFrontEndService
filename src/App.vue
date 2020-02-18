@@ -21,22 +21,20 @@
       </b-navbar>
   </div>
     <Login v-if="signedIn === false"/>
-    <router-view v-if="signedIn === true"/>
+    <Management v-if="signedIn === true"/>
     <FlashMessage></FlashMessage>
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
+// import Vue from 'vue'
 import Login from './components/Login'
-
-Vue.use(Login)
-
 import mytservice from "./services/mytservice";
+import Management from "./components/Management";
 
 export default {
   name: 'App',
-  components: {Login},
+  components: {Management, Login},
   data() {
     return {
       signedIn: false,
@@ -63,11 +61,12 @@ export default {
             // Refresh token is expired
             this.logout()
           } else {
+            console.log("Refreshing Token")
             mytservice.refreshToken(refresh_token)
                     .then(
                             response =>{
                               console.log(response)
-
+                              this.$cookies.set('access_token', response.data.access_token)
                             }
                     ).catch(
                     error => {
@@ -76,6 +75,7 @@ export default {
             )
           }
         } else {
+          console.log("Token is valid")
           this.signedIn = true
           this.user.username = this.$cookies.get('username')
           this.user.email = this.$cookies.get('email')
