@@ -20,7 +20,7 @@
         </b-collapse>
       </b-navbar>
   </div>
-    <User v-if="signedIn === false"/>
+    <Login v-if="signedIn === false"/>
     <router-view v-if="signedIn === true"/>
     <FlashMessage></FlashMessage>
   </div>
@@ -28,15 +28,15 @@
 
 <script>
 import Vue from 'vue'
-import User from './components/User'
+import Login from './components/Login'
 
-Vue.use(User)
+Vue.use(Login)
 
 import mytservice from "./services/mytservice";
 
 export default {
   name: 'App',
-  components: {User},
+  components: {Login},
   data() {
     return {
       signedIn: false,

@@ -1,12 +1,12 @@
 <template>
     <p>
-        This is the user page
+        This is the platform section
     </p>
 </template>
 
 <script>
     export default {
-        name: "User.vue"
+        name: "Platform"
     }
 </script>
 

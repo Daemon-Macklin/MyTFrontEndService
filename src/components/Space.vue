@@ -1,12 +1,12 @@
 <template>
     <p>
-        This is the user page
+        This is the spaces page
     </p>
 </template>
 
 <script>
     export default {
-        name: "User.vue"
+        name: "Space"
     }
 </script>
 
