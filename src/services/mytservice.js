@@ -28,5 +28,17 @@ export default {
     removeCred(type, id, token){
         return Api().delete('credentials/remove/'+ type +'/' + id,
             {headers: {'Authorization': 'Bearer '+token}})
+    },
+    createSpace(data, token){
+        return Api().post('spaces/create', data,
+            {headers: {'Authorization': 'Bearer '+token}})
+    },
+    getSpaces(uid, token){
+        return Api().get('spaces/get/'+uid,
+            {headers: {'Authorization': 'Bearer '+token}})
+    },
+    removeAWSSpaces(data, id, token){
+        return Api().post('space/remove/aws/'+id, data,
+            {headers: {'Authorization': 'Bearer '+token}})
     }
 }

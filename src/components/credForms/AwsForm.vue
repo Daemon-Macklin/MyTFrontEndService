@@ -15,12 +15,12 @@
                         </div>
                     </div>
                     <div class="field">
-                        <label>Secret Key</label>
-                        <input v-model="secretKey" type="text">
-                    </div>
-                    <div class="field">
                         <label>Access Key</label>
                         <input v-model="accessKey" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Secret Key</label>
+                        <input v-model="secretKey" type="text">
                     </div>
                     <div class="ui basic green button" v-on:click="createCreds">Add</div>
                 </div>

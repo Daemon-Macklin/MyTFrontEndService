@@ -12,7 +12,7 @@
 
 <script>
     import Vue from 'vue'
-    import AwsForm from "./forms/AwsForm";
+    import AwsForm from "./credForms/AwsForm";
     import VueTables from 'vue-tables-2'
     import mytservice from "../services/mytservice";
     Vue.use(VueTables.ClientTable, {compileTemplates: true, filterByColumn: true})
@@ -41,7 +41,8 @@
         },
         methods: {
             getCreds(){
-                mytservice.getCreds(this.user.uid).then(
+                let token = this.$cookies.get("access_token")
+                mytservice.getCreds(this.user.uid, token).then(
                     response => {
                         this.creds = response.data.creds
                     }
