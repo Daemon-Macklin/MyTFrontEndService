@@ -40,5 +40,9 @@ export default {
     removeAWSSpaces(data, id, token){
         return Api().post('space/remove/aws/'+id, data,
             {headers: {'Authorization': 'Bearer '+token}})
+    },
+    createPlatform(data, token) {
+        return Api().post('/platform/create', data,
+            {headers: {'Authorization': 'Bearer '+token}})
     }
 }
