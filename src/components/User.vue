@@ -1,17 +1,38 @@
 <template>
-    <div class="ui three cards">
+    <div class="ui two cards">
         <div class="ui raised card">
             <div class="content" style="alignment: left">
-                <div class="header">{{ user.username }}</div>
-                <div class="meta"> {{ user.email }}</div>
+                <div class="header">
+                    <h3 class="ui dividing header">User Data</h3>
+                </div>
+                <div class="meta">
+                    Your info
+                </div>
                 <div class="description">
-                    Elliot Fu is a film-maker from New York.
+                    <div class="ui vertical steps">
+                        <div class="step">
+                            <i class="user icon"></i>
+                            <div class="content">
+                                <div class="title">{{ user.username }}</div>
+                                <div class="description"> Username </div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <i class="envelope outline icon"></i>
+                            <div class="content">
+                                <div class="title">{{ user.email }}</div>
+                                <div class="description"> Email </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="ui raised card">
             <div class="content" style="alignment: left">
-                <div class="header">Keys</div>
+                <div class="header">
+                    <h3 class="ui dividing header">Keys</h3>
+                </div>
                 <div class="meta"> Get the public and private key we generated for you</div>
                     <div class="ui form">
                         <div class="inline field">
@@ -20,13 +41,6 @@
                         </div>
                         <div class="ui basic green button" v-on:click="getKey">Get </div>
                     </div>
-            </div>
-        </div>
-        <div class="ui raised card">
-            <div class="content" style="alignment: left">
-                <div class="header">Something else</div>
-                <div class="meta"> </div>
-                <div class="ui basic green button">Does nothing</div>
             </div>
         </div>
     </div>
