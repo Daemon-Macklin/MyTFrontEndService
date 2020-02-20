@@ -68,6 +68,7 @@
                             console.log(error)
                             if (error.response.status === 401) {
                                 this.flashMessage.error({title: 'Error', message: error.response.data.msg});
+                                this.$parent.$parent.$parent.isSignedIn()
                             }
                             else if(error.response.status === 400){
                                 this.flashMessage.error({title: 'Error', message: error.response.data.errors.message});
@@ -90,8 +91,11 @@
                     }
                 ).catch(
                     error => {
-                        console.log(error)
-                        this.flashMessage.error({title: 'Error', message: "Error Getting Credentials"});
+                        if(error.response.data.msg === "Token has expired"){
+                            this.flashMessage.error({title: 'Auth Error', message: "Token Has Expired"})
+                            this.$parent.$parent.isSignedIn()
+                        } else
+                            this.flashMessage.error({title: 'Error', message: "Error Getting Spaces"});
                     }
                 )
             },

@@ -72,8 +72,7 @@
                         console.log(error)
                         if (error.response.status === 401) {
                             this.flashMessage.error({title: 'Error', message: error.response.data.msg});
-                            if(error.response.data.msg === "")
-                                this.logout()
+                            this.$parent.$parent.$parent.isSignedIn()
                         }
                         else if(error.response.status === 400){
                             this.flashMessage.error({title: 'Error', message: error.response.data.errors.message});

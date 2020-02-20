@@ -148,8 +148,7 @@
                             console.log(error)
                             if (error.response.status === 401) {
                                 this.flashMessage.error({title: 'Error', message: error.response.data.msg});
-                                if(error.response.data.msg === "")
-                                    this.logout()
+                                this.$parent.$parent.isSignedIn()
                             }
                             else if(error.response.status === 400){
                                 this.flashMessage.error({title: 'Error', message: error.response.data.errors.message});
@@ -190,8 +189,7 @@
                                 console.log(error)
                                 if (error.response.status === 401) {
                                     this.flashMessage.error({title: 'Error', message: error.response.data.msg});
-                                    if(error.response.data.msg === "")
-                                        this.logout()
+                                    this.$parent.$parent.isSignedIn()
                                 }
                                 else if(error.response.status === 400){
                                     this.flashMessage.error({title: 'Error', message: error.response.data.errors.message});
@@ -222,7 +220,6 @@
                         if(error.response.data.msg === "Token has expired"){
                             this.flashMessage.error({title: 'Auth Error', message: "Token Has Expired"})
                             this.$parent.$parent.isSignedIn()
-                            console.log("Done from platform")
                         } else
                             this.flashMessage.error({title: 'Error', message: "Error Getting Spaces"});
                     }
