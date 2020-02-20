@@ -65,6 +65,7 @@
                                 response => {
                                     console.log(response)
                                     this.flashMessage.success({title: 'Space Removed', message: "You can double check your AWS dashboard to be sure"})
+                                    this.getSpaces()
                                 }
                             ).catch(
                                 error => {

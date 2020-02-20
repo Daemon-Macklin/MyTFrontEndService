@@ -68,6 +68,7 @@
                                 this.flashMessage.success({title: 'Credentials Removed', message: "Don't forget to deactivate them on AWS"})
                             else
                                 this.flashMessage.success({title: 'Credentials Removed', message: ""})
+                            this.getCreds()
                         }
                     ).catch(
                         error => {

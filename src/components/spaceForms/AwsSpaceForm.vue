@@ -61,6 +61,7 @@
                         response => {
                             console.log(response)
                             this.flashMessage.success({title: 'Space Has been created', message: 'You can deploy platforms now!'})
+                            this.$parent.getSpaces()
                         }
                     ).catch(
                         error => {

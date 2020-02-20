@@ -44,5 +44,13 @@ export default {
     createPlatform(data, token) {
         return Api().post('/platform/create', data,
             {headers: {'Authorization': 'Bearer '+token}})
+    },
+    getPlatforms(uid, token) {
+        return Api().get('platforms/get/'+uid,
+            {headers: {'Authorization': 'Bearer '+token}})
+    },
+    removePlatform(data, id, token) {
+        return Api().post('platform/remove/'+id, data,
+            {headers: {'Authorization': 'Bearer '+token}})
     }
 }

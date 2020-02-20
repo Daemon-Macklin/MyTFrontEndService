@@ -79,6 +79,7 @@
         },
         created() {
             this.getSpaces()
+            this.getPlatforms()
         },
         data() {
             return {
@@ -93,12 +94,13 @@
                 selectedCS: null,
                 selectedDB: null,
                 selectedSpace: null,
-                columns: ['type', 'name', 'id'],
+                columns: ['name', 'cloudService', 'ip' ,'id'],
                 platforms: [],
                 options: {
                     headings: {
                         name: 'Title',
-                        type: 'Type',
+                        ip: 'Public IP Address',
+                        cloudService: 'Cloud Service',
                         id: 'Remove'
                     }
                 }
@@ -138,7 +140,8 @@
                     mytservice.createPlatform(data, token).then(
                         response => {
                             console.log(response)
-                            this.flashMessage.success({title: 'Platform has been deployed', message: "Don't forget to deactivate them on AWS"})
+                            this.flashMessage.success({title: 'Platform has been deployed', message: "Now you can IoT"})
+                            this.getPlatforms()
                         }
                     ).catch(
                         error => {
@@ -154,6 +157,49 @@
                         }
                     )
                 }
+            },
+            removePlatform (id) {
+                console.log(id)
+                this.$fire({
+                    title: "Password",
+                    text: "Enter Password to Conform Delete",
+                    type: "info",
+                    input: "password",
+                }).then(r => {
+                    let password = r.value;
+                    if (password === null || password === 'undefined'){
+                        console.log("")
+                    } else {
+
+                        let data = {
+                            "password" : password,
+                            "uid" : this.user.uid
+                        }
+
+                        let token = this.$cookies.get("access_token")
+
+                        this.flashMessage.info({title: 'Platform teardown has started', message: "This could take a minute...."})
+                        mytservice.removePlatform(data, id, token).then(
+                            response => {
+                                console.log(response)
+                                this.flashMessage.success({title: 'Platform Removed', message: "You can double check your Cloud Service dashboard to be sure"})
+                                this.getPlatforms()
+                            }
+                        ).catch(
+                            error => {
+                                console.log(error)
+                                if (error.response.status === 401) {
+                                    this.flashMessage.error({title: 'Error', message: error.response.data.msg});
+                                    if(error.response.data.msg === "")
+                                        this.logout()
+                                }
+                                else if(error.response.status === 400){
+                                    this.flashMessage.error({title: 'Error', message: error.response.data.errors.message});
+                                }
+                            }
+                        )
+                    }
+                })
             },
             changeCS (event) {
                 this.selectedCS = event.target.options[event.target.options.selectedIndex].text
@@ -173,6 +219,25 @@
                     }
                 ).catch(
                     error => {
+                        if(error.response.data.msg === "Token has expired"){
+                            this.flashMessage.error({title: 'Auth Error', message: "Token Has Expired"})
+                            this.$parent.$parent.isSignedIn()
+                            console.log("Done from platform")
+                        } else
+                            this.flashMessage.error({title: 'Error', message: "Error Getting Spaces"});
+                    }
+                )
+            },
+            getPlatforms() {
+                let token = this.$cookies.get("access_token")
+                mytservice.getPlatforms(this.user.uid, token).then(
+                    response => {
+                        console.log(response)
+                        this.platforms = response.data.platforms
+                    }
+                ).catch(
+                    error => {
+                        console.log(error)
                         if(error.response.data.msg === "Token has expired"){
                             this.flashMessage.error({title: 'Auth Error', message: "Token Has Expired"})
                             this.$parent.$parent.isSignedIn()

@@ -64,6 +64,7 @@
                 mytservice.createAWSCreds(data, token).then(
                     response => {
                         this.flashMessage.success({title: 'Credentials Created', message: "Don't worry, we have encrypted it for you"})
+                        this.$parent.getCreds()
                         console.log(response)
                     }
                 ).catch(
