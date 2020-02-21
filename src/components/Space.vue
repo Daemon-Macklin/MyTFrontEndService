@@ -61,6 +61,7 @@
                                 "password": password
                             }
                             let token = this.$cookies.get("access_token")
+                            this.flashMessage.info({title: 'Space teardown has started', message: "This could take a minute..."})
                             mytservice.removeAWSSpaces(data, id, token).then(
                                 response => {
                                     console.log(response)

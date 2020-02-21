@@ -32,6 +32,7 @@
     "vue-checkbox-radio": "^0.6.0",
     "vue-login-form": "^1.0.3",
     "vue-router": "^3.1.5",
+    "vue-spinner": "^1.0.3",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {

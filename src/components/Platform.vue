@@ -50,7 +50,10 @@
                     <input :disabled="!rabbitMQuserPass" v-model="rabbitPassword" type="password">
                 </div>
             </div>
-            <div class="ui basic green button" v-on:click="createPlatform">Add</div>
+            <div class="ui basic green button" v-if="!loading" v-on:click="createPlatform">Add</div>
+            <div align="center" justify="center" v-if="loading">
+                <RingLoader size="60px"></RingLoader>
+            </div>
         </div>
     </div>
     <br>
@@ -68,6 +71,7 @@
     import Vue from 'vue'
     import {Checkbox, Radio} from 'vue-checkbox-radio';
     import mytservice from "../services/mytservice";
+    import RingLoader from 'vue-spinner/src/RingLoader.vue'
 
     Vue.component('checkbox', Checkbox);
     Vue.component('radio', Radio);
@@ -77,12 +81,16 @@
         props: {
             user: Object
         },
+        components: {
+            RingLoader
+        },
         created() {
             this.getSpaces()
             this.getPlatforms()
         },
         data() {
             return {
+                loading: false,
                 name: null,
                 password: null,
                 databases: ["InfluxDB", "MongoDB", "MySQL", "TimeScale"],
@@ -137,11 +145,13 @@
 
                     let token = this.$cookies.get("access_token")
                     this.flashMessage.info({title: 'Platform deployment has started', message: "This could take a few minutes...."})
+                    this.loading = true
                     mytservice.createPlatform(data, token).then(
                         response => {
                             console.log(response)
                             this.flashMessage.success({title: 'Platform has been deployed', message: "Now you can IoT"})
                             this.getPlatforms()
+                            this.loading = false
                         }
                     ).catch(
                         error => {
@@ -149,9 +159,11 @@
                             if (error.response.status === 401) {
                                 this.flashMessage.error({title: 'Error', message: error.response.data.msg});
                                 this.$parent.$parent.isSignedIn()
+                                this.loading = false
                             }
                             else if(error.response.status === 400){
                                 this.flashMessage.error({title: 'Error', message: error.response.data.errors.message});
+                                this.loading = false
                             }
                         }
                     )
