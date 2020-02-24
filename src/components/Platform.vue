@@ -50,6 +50,12 @@
                     <input :disabled="!rabbitMQuserPass" v-model="rabbitPassword" type="password">
                 </div>
             </div>
+            <div class="three wide fields">
+                <div class="field">
+                    <label> Data Processing Script </label>
+                    <input type="file" id="embedpollfileinput" @change="fileEvent($event)"/>
+                </div>
+            </div>
             <div class="ui basic green button" v-if="!loading" v-on:click="createPlatform">Add</div>
             <div align="center" justify="center" v-if="loading">
                 <RingLoader size="60px"></RingLoader>
@@ -104,6 +110,7 @@
                 selectedSpace: null,
                 columns: ['name', 'cloudService', 'ip' ,'id'],
                 platforms: [],
+                dataProcessingScript: null,
                 options: {
                     headings: {
                         name: 'Title',
@@ -143,10 +150,22 @@
                         data["rabbitPass"] = this.rabbitPassword
                     }
 
+                    let formData = new FormData()
+
+                    for (let prop in data) {
+                        formData.append(prop,data[prop]);
+                    }
+
+                    if(this.dataProcessingScript != null){
+                        formData.append("script", this.dataProcessingScript)
+                    }
+
                     let token = this.$cookies.get("access_token")
+
                     this.flashMessage.info({title: 'Platform deployment has started', message: "This could take a few minutes...."})
                     this.loading = true
-                    mytservice.createPlatform(data, token).then(
+
+                    mytservice.createPlatform(formData, token).then(
                         response => {
                             console.log(response)
                             this.flashMessage.success({title: 'Platform has been deployed', message: "Now you can IoT"})
@@ -155,15 +174,14 @@
                         }
                     ).catch(
                         error => {
-                            console.log(error)
+                            console.log(error.response)
+                            this.loading = false
                             if (error.response.status === 401) {
                                 this.flashMessage.error({title: 'Error', message: error.response.data.msg});
                                 this.$parent.$parent.isSignedIn()
-                                this.loading = false
                             }
                             else if(error.response.status === 400){
                                 this.flashMessage.error({title: 'Error', message: error.response.data.errors.message});
-                                this.loading = false
                             }
                         }
                     )
@@ -204,7 +222,11 @@
                                     this.$parent.$parent.isSignedIn()
                                 }
                                 else if(error.response.status === 400){
-                                    this.flashMessage.error({title: 'Error', message: error.response.data.errors.message});
+                                    try {
+                                        this.flashMessage.error({title: 'Error', message: error.response.data.errors.message});
+                                    }catch (e){
+                                        this.flashMessage.error({title: 'Error', message: "Error Creating Platform"});
+                                    }
                                 }
                             }
                         )
@@ -255,6 +277,9 @@
                             this.flashMessage.error({title: 'Error', message: "Error Getting Spaces"});
                     }
                 )
+            },
+            fileEvent(event) {
+                this.dataProcessingScript = event.target.files[0]
             }
         }
     }
