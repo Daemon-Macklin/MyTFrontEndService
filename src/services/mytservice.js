@@ -52,5 +52,9 @@ export default {
     removePlatform(data, id, token) {
         return Api().post('platform/remove/'+id, data,
             {headers: {'Authorization': 'Bearer '+token}})
+    },
+    updateProcessing(data, id, token) {
+        return Api().post('platforms/update/processing/'+id, data,
+            {headers: {'Authorization': 'Bearer '+token}})
     }
 }

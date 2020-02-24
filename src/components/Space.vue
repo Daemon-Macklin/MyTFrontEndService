@@ -50,36 +50,47 @@
                     text: "Enter Password to Conform Delete",
                     type: "info",
                     input: "password",
+                    showCancelButton: true
                 }).then(r => {
-                    let password = r.value;
-                    if (password === null || password === 'undefined'){
-                        console.log("")
-                    } else {
-                        if (type === "aws") {
-                            let data = {
-                                "uid": this.user.uid,
-                                "password": password
+                    if (r.value) {
+                        let password = r.value;
+                        if (password === null || password === 'undefined') {
+                            console.log("")
+                        } else {
+                            if (type === "aws") {
+                                let data = {
+                                    "uid": this.user.uid,
+                                    "password": password
+                                }
+                                let token = this.$cookies.get("access_token")
+                                this.flashMessage.info({
+                                    title: 'Space teardown has started',
+                                    message: "This could take a minute..."
+                                })
+                                mytservice.removeAWSSpaces(data, id, token).then(
+                                    response => {
+                                        console.log(response)
+                                        this.flashMessage.success({
+                                            title: 'Space Removed',
+                                            message: "You can double check your AWS dashboard to be sure"
+                                        })
+                                        this.getSpaces()
+                                    }
+                                ).catch(
+                                    error => {
+                                        console.log(error)
+                                        if (error.response.status === 401) {
+                                            this.flashMessage.error({title: 'Error', message: error.response.data.msg});
+                                            this.$parent.$parent.isSignedIn()
+                                        } else if (error.response.status === 400) {
+                                            this.flashMessage.error({
+                                                title: 'Error',
+                                                message: error.response.data.errors.message
+                                            });
+                                        }
+                                    }
+                                )
                             }
-                            let token = this.$cookies.get("access_token")
-                            this.flashMessage.info({title: 'Space teardown has started', message: "This could take a minute..."})
-                            mytservice.removeAWSSpaces(data, id, token).then(
-                                response => {
-                                    console.log(response)
-                                    this.flashMessage.success({title: 'Space Removed', message: "You can double check your AWS dashboard to be sure"})
-                                    this.getSpaces()
-                                }
-                            ).catch(
-                                error => {
-                                    console.log(error)
-                                    if (error.response.status === 401) {
-                                        this.flashMessage.error({title: 'Error', message: error.response.data.msg});
-                                        this.$parent.$parent.isSignedIn()
-                                    }
-                                    else if(error.response.status === 400){
-                                        this.flashMessage.error({title: 'Error', message: error.response.data.errors.message});
-                                    }
-                                }
-                            )
                         }
                     }
                 })
