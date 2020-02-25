@@ -63,6 +63,7 @@
                     </div>
                 </div>
             </div>
+            <h4 class="ui horizontal divider header">Packages</h4>
             <div class="ui centered stackable equal width grid">
                 <div class="four wide column" v-bind:key="item" v-for="item in packages">
                     <div class="ui card">
@@ -75,6 +76,7 @@
                     </div>
                 </div>
             </div>
+            <h4 class="ui horizontal divider header">Ready?</h4>
             <br>
             <div class="ui basic green button" v-if="!loading" v-on:click="createPlatform">Add</div>
             <div align="center" justify="center" v-if="loading">
@@ -325,12 +327,17 @@
                 Swal.mixin({
                     confirmButtonText: 'Next &rarr;',
                     showCancelButton: true,
-                    progressSteps: ['File', 'Password']
+                    progressSteps: ['File', 'Packages', 'Password']
                 }).queue([
                     {
                         title: 'New Script',
                         text: 'The script you want to upload',
                         input: "file"
+                    },
+                    {
+                        title: 'Additional Packages',
+                        text: "List all of your requirements in a comma separated list",
+                        input: "textarea"
                     },
                     {
                         title: 'Password',
@@ -343,7 +350,7 @@
                                 title: 'Must add python File',
                                 type: "error"
                             })
-                        } else if(result.value[1] === ""){
+                        } else if(result.value[2] === ""){
                             Swal.fire({
                                 title: 'Must add Password',
                                 type: "error"
@@ -362,7 +369,8 @@
                                     // console.log(result.value[0].name.split('.').pop())
 
                                     processingForm.append("uid", this.$cookies.get("uid"))
-                                    processingForm.append("password", result.value[1])
+                                    processingForm.append("password", result.value[2])
+                                    processingForm.append("packages", result.value[1])
                                     processingForm.append('script', result.value[0], "dataprocessing.py")
 
                                     console.log(processingForm)
