@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <b-navbar toggleable="lg" type="light" variant="success">
+      <b-navbar toggleable="lg" type="dark" variant="dark">
         <b-navbar-brand href="/">
           <img src="./assets/logoNav.png" alt="Img">
           MyT

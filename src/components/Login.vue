@@ -1,10 +1,8 @@
 <template>
     <div id="app">
-        <div id="section" class="ui raised centered segment">
             <login-form :data="loginFormData" @sign-in="signIn"/>
             <br>
             <login-form :data="registerFormData" @sign-in="register"/>
-        </div>
     </div>
 </template>
 

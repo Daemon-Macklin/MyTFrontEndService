@@ -1,7 +1,7 @@
 <template>
     <div id="app">
-        <div id="section" class="ui raised centered segment">
-        <b-navbar type="light" variant="info">
+        <div id="section" class="ui tertiary raised centered segment">
+        <b-navbar type="dark" variant="dark">
             <b-navbar-nav>
             <b-nav-item v-on:click="showSelection('platform')"> Platforms </b-nav-item>
             <b-nav-item v-on:click="showSelection('space')"> Spaces </b-nav-item>
