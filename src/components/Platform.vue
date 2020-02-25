@@ -50,12 +50,32 @@
                     <input :disabled="!rabbitMQuserPass" v-model="rabbitPassword" type="password">
                 </div>
             </div>
-            <div class="three wide fields">
+            <div class="two wide fields">
                 <div class="field">
                     <label> Data Processing Script </label>
                     <input type="file" id="embedpollfileinput" @change="fileEvent($event)"/>
                 </div>
+                <div class="field">
+                    <label> Required Packages</label>
+                    <div class="ui action input">
+                        <input type="text" v-model="packageInput" placeholder="Package Name...">
+                        <button class="ui button" v-on:click="addPackage">Add</button>
+                    </div>
+                </div>
             </div>
+            <div class="ui centered stackable equal width grid">
+                <div class="four wide column" v-bind:key="item" v-for="item in packages">
+                    <div class="ui card">
+                        <div class="content">
+                            <div class="header">
+                                {{item}}
+                                <i class="fa fa-trash-o" style="padding: 5px" v-on:click="removePackage(item)"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
             <div class="ui basic green button" v-if="!loading" v-on:click="createPlatform">Add</div>
             <div align="center" justify="center" v-if="loading">
                 <RingLoader size="60px"></RingLoader>
@@ -99,8 +119,10 @@
         data() {
             return {
                 loading: false,
+                packageInput: null,
                 name: null,
                 password: null,
+                packages: [],
                 databases: ["InfluxDB", "MongoDB", "MySQL", "TimeScale"],
                 cloudServices: ["Amazon Web Services", "Openstack", "Google Cloud"],
                 spaces: [],
@@ -144,7 +166,8 @@
                         "uid" : this.user.uid,
                         "password": this.password,
                         "sid" : this.selectedSpace,
-                        "database": this.selectedDB.toLowerCase()
+                        "database": this.selectedDB.toLowerCase(),
+                        "packages": this.packages
                     };
 
                     if (this.rabbitMQuserPass) {
@@ -371,6 +394,26 @@
                         }
                     }
                 })
+            },
+            addPackage() {
+                if(this.packageInput === null){
+                    this.flashMessage.error({title: 'Nothing to add', message: "Witty remark"})
+                } else {
+                    if (this.packages.includes(this.packageInput)) {
+                        this.flashMessage.error({title: 'Package Already in list', message: ""})
+                    } else {
+                        this.packages.push(this.packageInput)
+                        console.log(this.packages)
+                    }
+                }
+            },
+            removePackage(item){
+                if (this.packages.includes(item)){
+                    this.packages = this.packages.filter(function(value){
+                        return value !== item;
+                    });
+                    console.log(this.packages)
+                }
             }
         }
     }
