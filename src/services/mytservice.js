@@ -56,5 +56,9 @@ export default {
     updateProcessing(data, id, token) {
         return Api().post('platforms/update/processing/'+id, data,
             {headers: {'Authorization': 'Bearer '+token}})
+    },
+    generateDump(data, id, token){
+        return Api().post('platforms/database/dump/'+id, data,
+            {headers: {'Authorization': 'Bearer '+token}})
     }
 }

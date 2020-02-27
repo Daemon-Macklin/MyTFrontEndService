@@ -90,6 +90,7 @@
             <template slot="id" slot-scope="props">
                 <i class="center aligned fa fa-trash-o" style="padding: 5px" v-on:click="removePlatform(props.row.id)"></i>
                 <i class="center aligned fa fa-cogs" style="padding: 5px" v-on:click="updateProcessing(props.row.id)"></i>
+                <i class="center aligned fa fa-database" style="padding: 5px" v-on:click="getDump(props.row.id)"></i>
             </template>
         </v-client-table>
     </div>
@@ -396,6 +397,63 @@
                                             }
                                         }
                                     )
+                                    }
+                                }
+                            )
+                        }
+                    }
+                })
+            },
+            getDump(id){
+                console.log(id)
+
+                this.$fire({
+                    title: "Password",
+                    text: "Enter Password to Conform Delete",
+                    type: "info",
+                    input: "password",
+                    showCancelButton: true
+                }).then(r => {
+                    if (r.value) {
+                        let password = r.value;
+                        if (password === null || password === 'undefined') {
+                            console.log("")
+                        } else {
+
+                            let data = {
+                                "password": password,
+                                "uid": this.user.uid
+                            };
+
+                            let token = this.$cookies.get("access_token");
+
+                            this.flashMessage.info({
+                                title: 'Database Dump started',
+                                message: "This could take a minute...."
+                            });
+                            mytservice.generateDump(data, id, token).then(
+                                response => {
+                                    console.log(response);
+                                    this.flashMessage.success({title: 'Data Received', message: "Your download will start now"});
+                                }
+                            ).catch(
+                                error => {
+                                    console.log(error);
+                                    if (error.response.status === 401) {
+                                        this.flashMessage.error({title: 'Error', message: error.response.data.msg});
+                                        this.$parent.$parent.isSignedIn()
+                                    } else if (error.response.status === 400) {
+                                        try {
+                                            this.flashMessage.error({
+                                                title: 'Error',
+                                                message: error.response.data.errors.message
+                                            });
+                                        } catch (e) {
+                                            this.flashMessage.error({
+                                                title: 'Error',
+                                                message: "Error Getting Dump"
+                                            });
+                                        }
                                     }
                                 }
                             )
