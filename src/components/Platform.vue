@@ -103,6 +103,7 @@
     import Swal from 'sweetalert2'
     import mytservice from "../services/mytservice";
     import RingLoader from 'vue-spinner/src/RingLoader.vue'
+    import saveAs from "file-saver";
 
     Vue.component('checkbox', Checkbox);
     Vue.component('radio', Radio);
@@ -143,7 +144,7 @@
                         name: 'Title',
                         ip: 'Public IP Address',
                         cloudService: 'Cloud Service',
-                        id: 'Remove'
+                        id: 'Management'
                     }
                 }
             }
@@ -219,7 +220,7 @@
                 console.log(id);
                 this.$fire({
                     title: "Password",
-                    text: "Enter Password to Conform Delete",
+                    text: "Enter Password to Confirm Delete",
                     type: "info",
                     input: "password",
                     showCancelButton: true
@@ -409,7 +410,7 @@
 
                 this.$fire({
                     title: "Password",
-                    text: "Enter Password to Conform Delete",
+                    text: "Enter Password to get Dump",
                     type: "info",
                     input: "password",
                     showCancelButton: true
@@ -435,6 +436,12 @@
                                 response => {
                                     console.log(response);
                                     this.flashMessage.success({title: 'Data Received', message: "Your download will start now"});
+                                    let blob = new Blob([(response.data)])
+                                    try {
+                                        saveAs(blob, this.user.username + "dataBase.zip")
+                                    } catch (e) {
+                                        console.log(e)
+                                    }
                                 }
                             ).catch(
                                 error => {
@@ -480,6 +487,13 @@
                     });
                     console.log(this.packages)
                 }
+            },
+            str2bytes (str) {
+                var bytes = new Uint8Array(str.length);
+                for (var i=0; i<str.length; i++) {
+                    bytes[i] = str.charCodeAt(i);
+                }
+                return bytes;
             }
         }
     }

@@ -59,6 +59,6 @@ export default {
     },
     generateDump(data, id, token){
         return Api().post('platforms/database/dump/'+id, data,
-            {headers: {'Authorization': 'Bearer '+token}})
+            {headers: {'Authorization': 'Bearer '+token}, responseType: 'blob'})
     }
 }
