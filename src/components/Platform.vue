@@ -51,7 +51,7 @@
                 </div>
                 <div class="field">
                     <label>RabbitMQ TLS Enabled</label>
-                    <b-form-checkbox v-model="rabbitMQTLS" name="check-button" switch size="lg"></b-form-checkbox>
+                    <b-form-checkbox v-model="rabbitTLS" name="check-button" switch size="lg"></b-form-checkbox>
                 </div>
             </div>
             <div class="two wide fields">
@@ -137,7 +137,7 @@
                 rabbitMQuserPass: true,
                 rabbitUsername: null,
                 rabbitPassword: null,
-                rabbitMQTLS: false,
+                rabbitTLS: false,
                 selectedCS: null,
                 selectedDB: null,
                 selectedSpace: null,
@@ -177,7 +177,7 @@
                         "sid" : this.selectedSpace,
                         "database": this.selectedDB.toLowerCase(),
                         "packages": this.packages,
-                        "rabbitTLS": this.rabbitTLS
+                        "rabbitTLS": this.rabbitTLS.toString()
                     };
 
                     if (this.rabbitMQuserPass) {
