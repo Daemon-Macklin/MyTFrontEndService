@@ -13,15 +13,15 @@
                         <div class="step">
                             <i class="user icon"></i>
                             <div class="content">
-                                <div class="title">{{ user.username }}</div>
-                                <div class="description"> Username </div>
+                                <div class="title">Username</div>
+                                <div class="description">{{ user.username }}</div>
                             </div>
                         </div>
                         <div class="step">
                             <i class="envelope outline icon"></i>
                             <div class="content">
-                                <div class="title">{{ user.email }}</div>
-                                <div class="description"> Email </div>
+                                <div class="title">Email</div>
+                                <div class="description">{{ user.email }}</div>
                             </div>
                         </div>
                     </div>

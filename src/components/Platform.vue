@@ -36,7 +36,7 @@
                     </select>
                 </div>
             </div>
-            <div class="three wide fields">
+            <div class="four wide fields">
                 <div class="field">
                     <label>RabbitMQ Username/Password</label>
                     <b-form-checkbox v-model="rabbitMQuserPass" name="check-button" switch size="lg"></b-form-checkbox>
@@ -48,6 +48,10 @@
                 <div class="field">
                     <label>RabbitMQ Password</label>
                     <input :disabled="!rabbitMQuserPass" v-model="rabbitPassword" type="password">
+                </div>
+                <div class="field">
+                    <label>RabbitMQ TLS Enabled</label>
+                    <b-form-checkbox v-model="rabbitMQTLS" name="check-button" switch size="lg"></b-form-checkbox>
                 </div>
             </div>
             <div class="two wide fields">
@@ -133,6 +137,7 @@
                 rabbitMQuserPass: true,
                 rabbitUsername: null,
                 rabbitPassword: null,
+                rabbitMQTLS: false,
                 selectedCS: null,
                 selectedDB: null,
                 selectedSpace: null,
@@ -171,7 +176,8 @@
                         "password": this.password,
                         "sid" : this.selectedSpace,
                         "database": this.selectedDB.toLowerCase(),
-                        "packages": this.packages
+                        "packages": this.packages,
+                        "rabbitTLS": this.rabbitTLS
                     };
 
                     if (this.rabbitMQuserPass) {
