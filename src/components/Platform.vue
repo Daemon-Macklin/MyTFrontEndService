@@ -36,7 +36,7 @@
                     </select>
                 </div>
             </div>
-            <div class="three wide fields">
+            <div class="four wide fields">
                 <div class="field">
                     <label>RabbitMQ Username/Password</label>
                     <b-form-checkbox v-model="rabbitMQuserPass" name="check-button" switch size="lg"></b-form-checkbox>
@@ -48,6 +48,10 @@
                 <div class="field">
                     <label>RabbitMQ Password</label>
                     <input :disabled="!rabbitMQuserPass" v-model="rabbitPassword" type="password">
+                </div>
+                <div class="field">
+                    <label>RabbitMQ TLS Enabled</label>
+                    <b-form-checkbox v-model="rabbitTLS" name="check-button" switch size="lg"></b-form-checkbox>
                 </div>
             </div>
             <div class="two wide fields">
@@ -90,6 +94,7 @@
             <template slot="id" slot-scope="props">
                 <i class="center aligned fa fa-trash-o" style="padding: 5px" v-on:click="removePlatform(props.row.id)"></i>
                 <i class="center aligned fa fa-cogs" style="padding: 5px" v-on:click="updateProcessing(props.row.id)"></i>
+                <i class="center aligned fa fa-database" style="padding: 5px" v-on:click="getDump(props.row.id)"></i>
             </template>
         </v-client-table>
     </div>
@@ -102,6 +107,7 @@
     import Swal from 'sweetalert2'
     import mytservice from "../services/mytservice";
     import RingLoader from 'vue-spinner/src/RingLoader.vue'
+    import saveAs from "file-saver";
 
     Vue.component('checkbox', Checkbox);
     Vue.component('radio', Radio);
@@ -131,6 +137,7 @@
                 rabbitMQuserPass: true,
                 rabbitUsername: null,
                 rabbitPassword: null,
+                rabbitTLS: false,
                 selectedCS: null,
                 selectedDB: null,
                 selectedSpace: null,
@@ -142,7 +149,7 @@
                         name: 'Title',
                         ip: 'Public IP Address',
                         cloudService: 'Cloud Service',
-                        id: 'Remove'
+                        id: 'Management'
                     }
                 }
             }
@@ -169,7 +176,8 @@
                         "password": this.password,
                         "sid" : this.selectedSpace,
                         "database": this.selectedDB.toLowerCase(),
-                        "packages": this.packages
+                        "packages": this.packages,
+                        "rabbitTLS": this.rabbitTLS.toString()
                     };
 
                     if (this.rabbitMQuserPass) {
@@ -192,33 +200,73 @@
                     this.flashMessage.info({title: 'Platform deployment has started', message: "This could take a few minutes...."});
                     this.loading = true;
 
-                    mytservice.createPlatform(formData, token).then(
-                        response => {
-                            console.log(response);
-                            this.flashMessage.success({title: 'Platform has been deployed', message: "Now you can IoT"});
-                            this.getPlatforms();
-                            this.loading = false
-                        }
-                    ).catch(
-                        error => {
-                            console.log(error.response);
-                            this.loading = false;
-                            if (error.response.status === 401) {
-                                this.flashMessage.error({title: 'Error', message: error.response.data.msg});
-                                this.$parent.$parent.isSignedIn()
+                    if(this.rabbitTLS === false) {
+                        mytservice.createPlatform(formData, token).then(
+                            response => {
+                                console.log(response);
+                                this.flashMessage.success({
+                                    title: 'Platform has been deployed',
+                                    message: "Now you can IoT"
+                                });
+                                this.getPlatforms();
+                                this.loading = false
                             }
-                            else if(error.response.status === 400){
-                                this.flashMessage.error({title: 'Error', message: error.response.data.errors.message});
+                        ).catch(
+                            error => {
+                                console.log(error.response);
+                                this.loading = false;
+                                if (error.response.status === 401) {
+                                    this.flashMessage.error({title: 'Error', message: error.response.data.msg});
+                                    this.$parent.$parent.isSignedIn()
+                                } else if (error.response.status === 400) {
+                                    this.flashMessage.error({
+                                        title: 'Error',
+                                        message: error.response.data.errors.message
+                                    });
+                                }
                             }
-                        }
-                    )
+                        )
+                    } else if(this.rabbitTLS === true) {
+                        mytservice.createPlatformTLS(formData, token).then(
+                            response => {
+                                console.log(response);
+                                this.flashMessage.success({
+                                    title: 'Platform has been deployed',
+                                    message: "Now you can IoT, here are your TLS keys"
+                                });
+
+                                this.getPlatforms();
+                                this.loading = false
+                                let blob = new Blob([(response.data)])
+                                try {
+                                    saveAs(blob, this.name + "-Keys.zip")
+                                } catch (e) {
+                                    console.log(e)
+                                }
+                            }
+                        ).catch(
+                            error => {
+                                console.log(error.response);
+                                this.loading = false;
+                                if (error.response.status === 401) {
+                                    this.flashMessage.error({title: 'Error', message: error.response.data.msg});
+                                    this.$parent.$parent.isSignedIn()
+                                } else if (error.response.status === 400) {
+                                    this.flashMessage.error({
+                                        title: 'Error',
+                                        message: error.response.data.errors.message
+                                    });
+                                }
+                            }
+                        )
+                    }
                 }
             },
             removePlatform (id) {
                 console.log(id);
                 this.$fire({
                     title: "Password",
-                    text: "Enter Password to Conform Delete",
+                    text: "Enter Password to Confirm Delete",
                     type: "info",
                     input: "password",
                     showCancelButton: true
@@ -403,6 +451,69 @@
                     }
                 })
             },
+            getDump(id){
+                console.log(id)
+
+                this.$fire({
+                    title: "Password",
+                    text: "Enter Password to get Dump",
+                    type: "info",
+                    input: "password",
+                    showCancelButton: true
+                }).then(r => {
+                    if (r.value) {
+                        let password = r.value;
+                        if (password === null || password === 'undefined') {
+                            console.log("")
+                        } else {
+
+                            let data = {
+                                "password": password,
+                                "uid": this.user.uid
+                            };
+
+                            let token = this.$cookies.get("access_token");
+
+                            this.flashMessage.info({
+                                title: 'Database Dump started',
+                                message: "This could take a minute...."
+                            });
+                            mytservice.generateDump(data, id, token).then(
+                                response => {
+                                    console.log(response);
+                                    this.flashMessage.success({title: 'Data Received', message: "Your download will start now"});
+                                    let blob = new Blob([(response.data)])
+                                    try {
+                                        saveAs(blob, this.user.username + "dataBase.zip")
+                                    } catch (e) {
+                                        console.log(e)
+                                    }
+                                }
+                            ).catch(
+                                error => {
+                                    console.log(error);
+                                    if (error.response.status === 401) {
+                                        this.flashMessage.error({title: 'Error', message: error.response.data.msg});
+                                        this.$parent.$parent.isSignedIn()
+                                    } else if (error.response.status === 400) {
+                                        try {
+                                            this.flashMessage.error({
+                                                title: 'Error',
+                                                message: error.response.data.errors.message
+                                            });
+                                        } catch (e) {
+                                            this.flashMessage.error({
+                                                title: 'Error',
+                                                message: "Error Getting Dump"
+                                            });
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    }
+                })
+            },
             addPackage() {
                 if(this.packageInput === null){
                     this.flashMessage.error({title: 'Nothing to add', message: "Witty remark"})
@@ -422,7 +533,7 @@
                     });
                     console.log(this.packages)
                 }
-            }
+            },
         }
     }
 

@@ -45,6 +45,10 @@ export default {
         return Api().post('/platform/create', data,
             {headers: {'Authorization': 'Bearer '+token}})
     },
+    createPlatformTLS(data, token) {
+        return Api().post('/platform/create', data,
+            {headers: {'Authorization': 'Bearer '+token}, responseType: 'blob'})
+    },
     getPlatforms(uid, token) {
         return Api().get('platforms/get/'+uid,
             {headers: {'Authorization': 'Bearer '+token}})
@@ -56,5 +60,9 @@ export default {
     updateProcessing(data, id, token) {
         return Api().post('platforms/update/processing/'+id, data,
             {headers: {'Authorization': 'Bearer '+token}})
+    },
+    generateDump(data, id, token){
+        return Api().post('platforms/database/dump/'+id, data,
+            {headers: {'Authorization': 'Bearer '+token}, responseType: 'blob'})
     }
 }
