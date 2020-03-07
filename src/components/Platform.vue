@@ -200,26 +200,66 @@
                     this.flashMessage.info({title: 'Platform deployment has started', message: "This could take a few minutes...."});
                     this.loading = true;
 
-                    mytservice.createPlatform(formData, token).then(
-                        response => {
-                            console.log(response);
-                            this.flashMessage.success({title: 'Platform has been deployed', message: "Now you can IoT"});
-                            this.getPlatforms();
-                            this.loading = false
-                        }
-                    ).catch(
-                        error => {
-                            console.log(error.response);
-                            this.loading = false;
-                            if (error.response.status === 401) {
-                                this.flashMessage.error({title: 'Error', message: error.response.data.msg});
-                                this.$parent.$parent.isSignedIn()
+                    if(this.rabbitTLS === false) {
+                        mytservice.createPlatform(formData, token).then(
+                            response => {
+                                console.log(response);
+                                this.flashMessage.success({
+                                    title: 'Platform has been deployed',
+                                    message: "Now you can IoT"
+                                });
+                                this.getPlatforms();
+                                this.loading = false
                             }
-                            else if(error.response.status === 400){
-                                this.flashMessage.error({title: 'Error', message: error.response.data.errors.message});
+                        ).catch(
+                            error => {
+                                console.log(error.response);
+                                this.loading = false;
+                                if (error.response.status === 401) {
+                                    this.flashMessage.error({title: 'Error', message: error.response.data.msg});
+                                    this.$parent.$parent.isSignedIn()
+                                } else if (error.response.status === 400) {
+                                    this.flashMessage.error({
+                                        title: 'Error',
+                                        message: error.response.data.errors.message
+                                    });
+                                }
                             }
-                        }
-                    )
+                        )
+                    } else if(this.rabbitTLS === true) {
+                        mytservice.createPlatformTLS(formData, token).then(
+                            response => {
+                                console.log(response);
+                                this.flashMessage.success({
+                                    title: 'Platform has been deployed',
+                                    message: "Now you can IoT, here are your TLS keys"
+                                });
+
+                                this.getPlatforms();
+                                this.loading = false
+                                let blob = new Blob([(response.data)])
+                                try {
+                                    saveAs(blob, this.name + "-Keys.zip")
+                                } catch (e) {
+                                    console.log(e)
+                                }
+                            }
+                        ).catch(
+                            error => {
+                                console.log(error.response);
+                                this.loading = false;
+                                if (error.response.status === 401) {
+                                    this.flashMessage.error({title: 'Error', message: error.response.data.msg});
+                                    this.$parent.$parent.isSignedIn()
+                                } else if (error.response.status === 400) {
+                                    this.flashMessage.error({
+                                        title: 'Error',
+                                        message: error.response.data.errors.message
+                                    });
+                                }
+                            }
+                        )
+                    }
                 }
             },
             removePlatform (id) {
@@ -494,13 +534,6 @@
                     console.log(this.packages)
                 }
             },
-            str2bytes (str) {
-                var bytes = new Uint8Array(str.length);
-                for (var i=0; i<str.length; i++) {
-                    bytes[i] = str.charCodeAt(i);
-                }
-                return bytes;
-            }
         }
     }
 
