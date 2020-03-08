@@ -67,6 +67,19 @@
                     </div>
                 </div>
             </div>
+            <div class="two wide fields">
+                <div class="field">
+                    <label> Monitoring Enabled </label>
+                    <b-form-checkbox v-model="monitoring" name="check-button" switch size="lg"></b-form-checkbox>
+                </div>
+                <div class="field">
+                    <label> Monitoring Frequency </label>
+                    <select class="form-control" :disabled="!monitoring" @change="changeFreq($event)">
+                        <option value="" selected disabled>Freq(mins)</option>
+                        <option v-for="freq in this.monitoringFreq" :value="freq" :key="freq">{{ freq }}</option>
+                    </select>
+                </div>
+            </div>
             <h4 class="ui horizontal divider header">Packages</h4>
             <div class="ui centered stackable equal width grid">
                 <div class="four wide column" v-bind:key="item" v-for="item in packages">
@@ -92,7 +105,7 @@
     <div class="ui raised segment">
         <v-client-table :columns="columns" :data="platforms" :options="options">
             <template slot="id" slot-scope="props">
-                <i class="center aligned fa fa-trash-o" style="padding: 5px" v-on:click="removePlatform(props.row.id)"></i>
+                <i class="center aligned fa fa-trash-o" style="padding-right: 5px" v-on:click="removePlatform(props.row.id)"></i>
                 <i class="center aligned fa fa-cogs" style="padding: 5px" v-on:click="updateProcessing(props.row.id)"></i>
                 <i class="center aligned fa fa-database" style="padding: 5px" v-on:click="getDump(props.row.id)"></i>
             </template>
@@ -133,6 +146,7 @@
                 packages: [],
                 databases: ["InfluxDB", "MongoDB", "MySQL", "TimeScale"],
                 cloudServices: ["Amazon Web Services", "Openstack", "Google Cloud"],
+                monitoringFreq: [2, 5, 10, 20, 30, 60],
                 spaces: [],
                 rabbitMQuserPass: true,
                 rabbitUsername: null,
@@ -141,6 +155,8 @@
                 selectedCS: null,
                 selectedDB: null,
                 selectedSpace: null,
+                monitoring: false,
+                selectedFreq: null,
                 columns: ['name', 'cloudService', 'ip' ,'id'],
                 platforms: [],
                 dataProcessingScript: null,
@@ -158,9 +174,10 @@
             createPlatform() {
                 if (this.name === null || this.password === null || this.selectedDB === null || this.selectedCS === null){
                     this.flashMessage.error({title: 'Error', message: "All Fields must be filled"});
-                }
-                if (this.rabbitMQuserPass === true && (this.rabbitUsername === null || this.rabbitPassword === null)){
+                } else if (this.rabbitMQuserPass === true && (this.rabbitUsername === null || this.rabbitPassword === null)){
                     this.flashMessage.error({title: 'Error', message: "If you are using RabbitMQ credentials you must use both username and password"});
+                } else if (this.monitoring === true && this.selectedFreq === null){
+                    this.flashMessage.error({title: 'Error', message: "If you are using monitoring you must specify frequency"});
                 } else {
 
                     let cloudServices = {
@@ -177,7 +194,9 @@
                         "sid" : this.selectedSpace,
                         "database": this.selectedDB.toLowerCase(),
                         "packages": this.packages,
-                        "rabbitTLS": this.rabbitTLS.toString()
+                        "rabbitTLS": this.rabbitTLS.toString(),
+                        "monitoring" : this.monitoring,
+                        "monitoringFreq" : this.selectedFreq
                     };
 
                     if (this.rabbitMQuserPass) {
@@ -209,6 +228,7 @@
                                     message: "Now you can IoT"
                                 });
                                 this.getPlatforms();
+                                this.clearFields()
                                 this.loading = false
                             }
                         ).catch(
@@ -234,7 +254,6 @@
                                     title: 'Platform has been deployed',
                                     message: "Now you can IoT, here are your TLS keys"
                                 });
-
                                 this.getPlatforms();
                                 this.loading = false
                                 let blob = new Blob([(response.data)])
@@ -243,6 +262,7 @@
                                 } catch (e) {
                                     console.log(e)
                                 }
+                                this.clearFields()
                             }
                         ).catch(
                             error => {
@@ -327,6 +347,10 @@
             },
             changeDB (event) {
                 this.selectedDB = event.target.options[event.target.options.selectedIndex].text
+            },
+            changeFreq (event) {
+                this.selectedFreq = event.target.options[event.target.options.selectedIndex].text
+                console.log(this.selectedFreq)
             },
             changeSpace (event) {
                 let selectedSpaceText = event.target.options[event.target.options.selectedIndex].text;
@@ -534,9 +558,47 @@
                     console.log(this.packages)
                 }
             },
+            clearFields() {
+                this.name = null
+                this.password = null
+                this.packages = []
+                this.rabbitMQuserPass = true
+                this.rabbitUsername = null
+                this.rabbitPassword = null
+                this.rabbitTLS = null
+                this.selectedCS = null
+                this.selectedDB = null
+                this.selectedSpace = null
+                this.monitoring = false
+                this.selectedFreq = null
+                this.dataProcessingScript = null
+            }
         }
     }
 
+    /**
+     *                 loading: false,
+     packageInput: null,
+     name: null,
+     password: null,
+     packages: [],
+     databases: ["InfluxDB", "MongoDB", "MySQL", "TimeScale"],
+     cloudServices: ["Amazon Web Services", "Openstack", "Google Cloud"],
+     monitoringFreq: [2, 5, 10, 20, 30, 60],
+     spaces: [],
+     rabbitMQuserPass: true,
+     rabbitUsername: null,
+     rabbitPassword: null,
+     rabbitTLS: false,
+     selectedCS: null,
+     selectedDB: null,
+     selectedSpace: null,
+     monitoring: false,
+     selectedFreq: null,
+     columns: ['name', 'cloudService', 'ip' ,'id'],
+     platforms: [],
+     dataProcessingScript: null,
+     */
 </script>
 
 <style scoped>

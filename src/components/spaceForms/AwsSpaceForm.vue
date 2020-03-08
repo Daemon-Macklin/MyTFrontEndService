@@ -75,6 +75,7 @@
                             this.flashMessage.success({title: 'Space Has been created', message: 'You can deploy platforms now!'})
                             this.$parent.getSpaces()
                             this.loading=false
+                            this.clearFields()
                         }
                     ).catch(
                         error => {
@@ -117,6 +118,11 @@
                 let selectedCredText = event.target.options[event.target.options.selectedIndex].text
                 this.selectedCred = selectedCredText.match(/\(([^)]+)\)/)[1]
             },
+            clearFields() {
+                this.selectedCred = null
+                this.name = null
+                this.password = null
+            }
         },
     }
 </script>

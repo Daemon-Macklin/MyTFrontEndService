@@ -66,6 +66,7 @@
                         this.flashMessage.success({title: 'Credentials Created', message: "Don't worry, we have encrypted it for you"})
                         this.$parent.getCreds()
                         console.log(response)
+                        this.clearFields()
                     }
                 ).catch(
                     error => {
@@ -79,9 +80,14 @@
                         }
                     }
                 )
-                console.log(data)
             }
-        }
+        },
+            clearFields() {
+                this.accessKey = null
+                this.secretKey = null
+                this.password = null
+                this.name = null
+            }
     }
     }
 </script>
