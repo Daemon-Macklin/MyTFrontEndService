@@ -228,6 +228,7 @@
                                     message: "Now you can IoT"
                                 });
                                 this.getPlatforms();
+                                this.clearFields()
                                 this.loading = false
                             }
                         ).catch(
@@ -253,7 +254,6 @@
                                     title: 'Platform has been deployed',
                                     message: "Now you can IoT, here are your TLS keys"
                                 });
-
                                 this.getPlatforms();
                                 this.loading = false
                                 let blob = new Blob([(response.data)])
@@ -262,6 +262,7 @@
                                 } catch (e) {
                                     console.log(e)
                                 }
+                                this.clearFields()
                             }
                         ).catch(
                             error => {
@@ -557,9 +558,47 @@
                     console.log(this.packages)
                 }
             },
+            clearFields() {
+                this.name = null
+                this.password = null
+                this.packages = []
+                this.rabbitMQuserPass = true
+                this.rabbitUsername = null
+                this.rabbitPassword = null
+                this.rabbitTLS = null
+                this.selectedCS = null
+                this.selectedDB = null
+                this.selectedSpace = null
+                this.monitoring = false
+                this.selectedFreq = null
+                this.dataProcessingScript = null
+            }
         }
     }
 
+    /**
+     *                 loading: false,
+     packageInput: null,
+     name: null,
+     password: null,
+     packages: [],
+     databases: ["InfluxDB", "MongoDB", "MySQL", "TimeScale"],
+     cloudServices: ["Amazon Web Services", "Openstack", "Google Cloud"],
+     monitoringFreq: [2, 5, 10, 20, 30, 60],
+     spaces: [],
+     rabbitMQuserPass: true,
+     rabbitUsername: null,
+     rabbitPassword: null,
+     rabbitTLS: false,
+     selectedCS: null,
+     selectedDB: null,
+     selectedSpace: null,
+     monitoring: false,
+     selectedFreq: null,
+     columns: ['name', 'cloudService', 'ip' ,'id'],
+     platforms: [],
+     dataProcessingScript: null,
+     */
 </script>
 
 <style scoped>
