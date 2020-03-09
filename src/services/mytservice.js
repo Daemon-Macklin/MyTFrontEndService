@@ -21,6 +21,10 @@ export default {
       return Api().post('credentials/create/aws', data,
           {headers: {'Authorization': 'Bearer '+token}})
     },
+    createOSCreds(data, token){
+        return Api().post('credentials/create/os', data,
+            {headers: {'Authorization': 'Bearer '+token}})
+    },
     getCreds(uid, token){
        return Api().get('credentials/get/'+uid,
            {headers: {'Authorization': 'Bearer '+token}})
