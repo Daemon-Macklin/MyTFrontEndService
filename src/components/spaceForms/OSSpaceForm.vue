@@ -17,16 +17,26 @@
                 <div class="fields">
                     <div class="field">
                         <label>Tenant Network</label>
-                        <input v-model="tenantNetwork" type="text">
+                        <input v-model="tenantName" type="text">
                     </div>
                     <div class="field">
                         <label>Availability Zone</label>
                         <input v-model="availabilityZone" type="text">
                     </div>
                 </div>
-                <div class="field">
-                    <label>IP Pool</label>
-                    <input v-model="ipPool" type="text">
+                <div class="fields">
+                    <div class="field">
+                        <label>External Network</label>
+                        <input v-model="ipPool" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Security Group</label>
+                        <input v-model="securityGroup" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Internal Network</label>
+                        <input v-model="intNetwork" type="text">
+                    </div>
                 </div>
                 <select class="form-control" @change="changeCred($event)">
                     <option value="" selected disabled>Credentials</option>
@@ -59,26 +69,30 @@
             return {
                 name: null,
                 password: null,
-                tenantNetwork: null,
+                tenantName: null,
                 availabilityZone: null,
                 ipPool: null,
+                securityGroup: null,
                 selectedCred: null,
+                intNetwork: null,
                 loading: false
             }
         },
         methods: {
             createSpace() {
-                if(this.name === null || this.password === null || this.tenantNetwork === null || this.availabilityZone === null || this.ipPool === null || this.selectedCred === null) {
+                if(this.name === null || this.password === null || this.tenantNetwork === null || this.availabilityZone === null || this.ipPool === null || this.intNetwork === null || this.selectedCred === null) {
                     this.flashMessage.error({title: 'Error', message: "All Fields must be filled"});
                 } else{
                     let data = {
-                      uid : this.user.uid,
-                      name: this.name,
-                      password: this.password,
-                      tenantNetwork: this.tenantNetwork,
-                      availabilityZone: this.availabilityZone,
-                      ipPool: this.ipPool,
-                      cid: this.selectedCred
+                        uid : this.user.uid,
+                        name: this.name,
+                        password: this.password,
+                        tenantName: this.tenantName,
+                        availabilityZone: this.availabilityZone,
+                        ipPool: this.ipPool,
+                        securityGroup: this.securityGroup,
+                        intNetwork: this.intNetwork,
+                        cid: this.selectedCred
                     }
                     let token = this.$cookies.get("access_token")
                     this.loading = true

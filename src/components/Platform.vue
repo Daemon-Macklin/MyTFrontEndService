@@ -36,6 +36,16 @@
                     </select>
                 </div>
             </div>
+            <div class="two wide fields" v-if="selectedCS==='Openstack'">
+                <div class="field">
+                    <label>Flavor Name</label>
+                    <input v-model="flavorName" type="text">
+                </div>
+                <div class="field">
+                    <label>Image Name</label>
+                    <input v-model="imageName" type="text">
+                </div>
+            </div>
             <div class="four wide fields">
                 <div class="field">
                     <label>RabbitMQ Username/Password</label>
@@ -160,6 +170,8 @@
                 columns: ['name', 'cloudService', 'ip' ,'id'],
                 platforms: [],
                 dataProcessingScript: null,
+                imageName: null,
+                flavorName: null,
                 options: {
                     headings: {
                         name: 'Title',
@@ -204,6 +216,10 @@
                         data["rabbitPass"] = this.rabbitPassword
                     }
 
+                    if(this.selectedCS === "Openstack"){
+                        data["flavorName"] = this.flavorName
+                        data["imageName"] = this.imageName
+                    }
                     let formData = new FormData();
 
                     for (let prop in data) {
