@@ -16,7 +16,7 @@
                 </div>
                 <select class="form-control" @change="changeCred($event)">
                     <option value="" selected disabled>Credentials</option>
-                    <option v-for="cred in this.creds" :value="cred.id" :key="cred.id">{{ cred.name }} ({{cred.id}})</option>
+                    <option v-for="cred in this.awsCreds" :value="cred.id" :key="cred.id">{{ cred.name }} ({{cred.id}})</option>
                 </select>
                 <br><br>
                 <div class="ui basic green button" v-on:click="createSpace">Add</div>
@@ -45,7 +45,9 @@
         },
         data(){
             return {
-                creds: [],
+                awsCreds: [],
+                osCreds: [],
+                gcpCreds: [],
                 name: null,
                 password: null,
                 selectedCred: null,
@@ -96,13 +98,20 @@
                 let token = this.$cookies.get("access_token")
                 mytservice.getCreds(this.user.uid, token).then(
                     response => {
-                        let creds = []
+                        let awsCreds = []
                         for (let key in response.data.creds) {
-                            if(response.data.creds[key].type === "aws"){
-                                creds.push(response.data.creds[key])
+                            if(response.data.creds[key].type === "AWS"){
+                                awsCreds.push(response.data.creds[key])
                             }
                         }
-                        this.creds = creds
+                        this.awsCreds = awsCreds
+                        let gcpCreds = []
+                        for (let key in response.data.creds) {
+                            if(response.data.creds[key].type === "Openstack"){
+                                gcpCreds.push(response.data.creds[key])
+                            }
+                        }
+                        this.gcpCreds = gcpCreds
                     }
                 ).catch(
                     error => {
