@@ -15,7 +15,7 @@
 
 <script>
     import Vue from 'vue'
-    import AwsForm from "./credForms/AwsForm";
+    import AwsForm from "./credForms/AwsCredForm";
     import OSCredForm from "./credForms/OSCredForm"
     import VueTables from 'vue-tables-2'
     import mytservice from "../services/mytservice";
