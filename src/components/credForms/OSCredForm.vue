@@ -4,7 +4,7 @@
             <div class="header">Openstack Credentials</div>
             <div class="meta"> Save credentials for your Openstack</div>
             <div class="ui form">
-                <div class="fields">
+                <div class="two wide fields">
                     <div class="field">
                         <label>Name</label>
                         <input v-model="name" type="text">
@@ -14,7 +14,7 @@
                         <input v-model="password" type="password">
                     </div>
                 </div>
-                <div class="fields">
+                <div class="two wide fields">
                     <div class="field">
                         <label>OS Username</label>
                         <input v-model="osUsername" type="text">
@@ -28,9 +28,9 @@
                     <label>Auth Url</label>
                     <input v-model="authUrl" type="text">
                 </div>
-                <div class="ui basic green button" v-on:click="createCreds">Add</div>
             </div>
         </div>
+        <div class="ui blue bottom attached button" v-on:click="createCreds">Add</div>
     </div>
 </template>
 
