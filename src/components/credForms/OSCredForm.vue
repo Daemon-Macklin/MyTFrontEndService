@@ -24,15 +24,9 @@
                         <input v-model="osPassword" type="password">
                     </div>
                 </div>
-                <div class="fields">
-                    <div class="field">
-                        <label>Auth Url</label>
-                        <input v-model="authUrl" type="text">
-                    </div>
-                    <div class="field">
-                        <label>Key Pair Name</label>
-                        <input v-model="keyPairName" type="text">
-                    </div>
+                <div class="field">
+                    <label>Auth Url</label>
+                    <input v-model="authUrl" type="text">
                 </div>
                 <div class="ui basic green button" v-on:click="createCreds">Add</div>
             </div>
@@ -59,12 +53,11 @@
                 osUsername: null,
                 osPassword: null,
                 authUrl: null,
-                keyPairName: null
             }
         },
         methods: {
             createCreds(){
-                if(this.name === null || this.packageInput === null || this.osUsername === null || this.osPassword === null || this.audio === null || this.keyPairName === null){
+                if(this.name === null || this.packageInput === null || this.osUsername === null || this.osPassword === null || this.audio === null){
                     this.flashMessage.error({title: 'Error', message: "All fields must be filled out"});
                 } else {
                     let data = {
@@ -74,7 +67,6 @@
                         osUsername: this.osUsername,
                         osPassword: this.osPassword,
                         authUrl: this.authUrl,
-                        keyPairName: this.keyPairName
                     }
                     let token = this.$cookies.get("access_token")
                     mytservice.createOSCreds(data, token).then(
@@ -104,7 +96,6 @@
                 this.osUsername = null
                 this.osPassword = null
                 this.authUrl = null
-                this.keyPairName = null
             }
         }
     }

@@ -30,13 +30,13 @@
                         <input v-model="ipPool" type="text">
                     </div>
                     <div class="field">
-                        <label>Security Group</label>
-                        <input v-model="securityGroup" type="text">
-                    </div>
-                    <div class="field">
                         <label>Internal Network</label>
                         <input v-model="intNetwork" type="text">
                     </div>
+                </div>
+                <div class="field">
+                    <label>Security Group</label>
+                    <input v-model="securityGroup" type="text">
                 </div>
                 <select class="form-control" @change="changeCred($event)">
                     <option value="" selected disabled>Credentials</option>
