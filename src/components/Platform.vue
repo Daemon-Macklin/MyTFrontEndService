@@ -23,9 +23,13 @@
                 </div>
                 <div class="field">
                     <label>Space</label>
-                    <select class="form-control" @change="changeSpace($event)">
+                    <select v-if="selectedCS!=='Google Cloud'" class="form-control" @change="changeSpace($event)">
                         <option value="" selected disabled>Space</option>
                         <option v-for="space in spaces" :value="space.id" :key="space.id">{{ space.name }} ({{space.id}})</option>
+                    </select>
+                    <select v-if="selectedCS==='Google Cloud'" class="form-control" @change="changeCred($event)">
+                        <option value="" selected disabled>Credentials</option>
+                        <option v-for="cred in creds" :value="cred.id" :key="cred.id">{{ cred.name }} ({{cred.id}})</option>
                     </select>
                 </div>
                 <div class="field">
@@ -44,6 +48,12 @@
                 <div class="field">
                     <label>Image Name</label>
                     <input v-model="imageName" type="text">
+                </div>
+            </div>
+            <div class="two wide fields" v-if="selectedCS==='Google Cloud'">
+                <div class="field">
+                    <label>Availability Zone</label>
+                    <input v-model="zone" type="text">
                 </div>
             </div>
             <div class="four wide fields">
@@ -145,6 +155,7 @@
         },
         created() {
             this.getSpaces();
+            this.getCreds()
             this.getPlatforms()
         },
         data() {
@@ -158,6 +169,7 @@
                 cloudServices: ["Amazon Web Services", "Openstack", "Google Cloud"],
                 monitoringFreq: [2, 5, 10, 20, 30, 60],
                 spaces: [],
+                creds: [],
                 rabbitMQuserPass: true,
                 rabbitUsername: null,
                 rabbitPassword: null,
@@ -165,6 +177,8 @@
                 selectedCS: null,
                 selectedDB: null,
                 selectedSpace: null,
+                selectedCred: null,
+                zone: null,
                 monitoring: false,
                 selectedFreq: null,
                 columns: ['name', 'cloudService', 'ip' ,'id'],
@@ -199,7 +213,7 @@
                     };
 
                     let data = {
-                        "platformName" : this.name,
+                        "platformName" : this.name.toLowerCase(),
                         "cloudService" : cloudServices[this.selectedCS],
                         "uid" : this.user.uid,
                         "password": this.password,
@@ -219,6 +233,11 @@
                     if(this.selectedCS === "Openstack"){
                         data["flavorName"] = this.flavorName
                         data["imageName"] = this.imageName
+                    }
+
+                    if(this.selectedCS === "Google Cloud"){
+                        data["zone"] = this.zone
+                        data["cid"] = this.selectedCred
                     }
 
                     let formData = new FormData();
@@ -373,6 +392,10 @@
                 let selectedSpaceText = event.target.options[event.target.options.selectedIndex].text;
                 this.selectedSpace = selectedSpaceText.match(/\(([^)]+)\)/)[1]
             },
+            changeCred (event) {
+                let selectedCredText = event.target.options[event.target.options.selectedIndex].text
+                this.selectedCred = selectedCredText.match(/\(([^)]+)\)/)[1]
+            },
             getSpaces(){
                 let token = this.$cookies.get("access_token");
                 mytservice.getSpaces(this.user.uid, token).then(
@@ -403,6 +426,28 @@
                             this.flashMessage.error({title: 'Auth Error', message: "Token Has Expired"});
                             this.$parent.$parent.isSignedIn();
                             console.log("Done from platform")
+                        } else
+                            this.flashMessage.error({title: 'Error', message: "Error Getting Spaces"});
+                    }
+                )
+            },
+            getCreds(){
+                let token = this.$cookies.get("access_token")
+                mytservice.getCreds(this.user.uid, token).then(
+                    response => {
+                        let gcpCreds = []
+                        for (let key in response.data.creds) {
+                            if (response.data.creds[key].type === "GCP") {
+                                gcpCreds.push(response.data.creds[key])
+                            }
+                        }
+                        this.creds = gcpCreds
+                    }
+                    ).catch(
+                    error => {
+                        if(error.response.data.msg === "Token has expired"){
+                            this.flashMessage.error({title: 'Auth Error', message: "Token Has Expired"})
+                            this.$parent.$parent.isSignedIn()
                         } else
                             this.flashMessage.error({title: 'Error', message: "Error Getting Spaces"});
                     }
