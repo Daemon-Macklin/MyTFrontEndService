@@ -66,19 +66,6 @@
             </div>
             <div class="two wide fields">
                 <div class="field">
-                    <label> Data Processing Script </label>
-                    <input type="file" id="embedpollfileinput" @change="fileEvent($event)"/>
-                </div>
-                <div class="field">
-                    <label> Required Packages</label>
-                    <div class="ui action input">
-                        <input type="text" v-model="packageInput" placeholder="Package Name...">
-                        <button class="ui button" v-on:click="addPackage">Add</button>
-                    </div>
-                </div>
-            </div>
-            <div class="two wide fields">
-                <div class="field">
                     <label> Monitoring Enabled </label>
                     <b-form-checkbox v-model="monitoring" name="check-button" switch size="lg"></b-form-checkbox>
                 </div>
@@ -88,6 +75,19 @@
                         <option value="" selected disabled>Freq(mins)</option>
                         <option v-for="freq in this.monitoringFreq" :value="freq" :key="freq">{{ freq }}</option>
                     </select>
+                </div>
+            </div>
+            <div class="two wide fields">
+                <div class="field">
+                    <label> Data Processing Script </label>
+                    <input type="file" id="embedpollfileinput" @change="fileEvent($event)"/>
+                </div>
+                <div class="field">
+                    <label> Required Packages</label>
+                    <div class="ui action input">
+                        <input type="text" v-model="packageInput" placeholder="Package Name...">
+                        <button class="ui blue button" v-on:click="addPackage">Add</button>
+                    </div>
                 </div>
             </div>
             <h4 class="ui horizontal divider header">Packages</h4>
@@ -105,7 +105,7 @@
             </div>
             <h4 class="ui horizontal divider header">Ready?</h4>
             <br>
-            <div class="ui basic green button" v-if="!loading" v-on:click="createPlatform">Add</div>
+            <div class="ui blue button" v-if="!loading" v-on:click="createPlatform">Add</div>
             <div align="center" justify="center" v-if="loading">
                 <RingLoader size="60px"></RingLoader>
             </div>

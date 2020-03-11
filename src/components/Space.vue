@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="ui cards">
+        <div class="ui two wide cards">
         <AwsSpaceForm v-bind:user="user" v-bind:awsCreds="awsCreds"/>
         <OSSpaceForm v-bind:user="user" v-bind:osCreds="osCreds"/>
         </div>

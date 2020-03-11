@@ -4,7 +4,7 @@
             <div class="header">Openstack Space</div>
             <div class="meta">Save a network configuration for Openstack Platforms</div>
             <div v-if="!loading" class="ui form">
-                <div class="fields">
+                <div class="four wide fields">
                     <div class="field">
                         <label>Name</label>
                         <input v-model="name" type="text">
@@ -13,8 +13,6 @@
                         <label>Password</label>
                         <input v-model="password" type="password">
                     </div>
-                </div>
-                <div class="fields">
                     <div class="field">
                         <label>Tenant Network</label>
                         <input v-model="tenantName" type="text">
@@ -24,7 +22,7 @@
                         <input v-model="availabilityZone" type="text">
                     </div>
                 </div>
-                <div class="fields">
+                <div class="four wide fields">
                     <div class="field">
                         <label>External Network</label>
                         <input v-model="ipPool" type="text">
@@ -33,21 +31,23 @@
                         <label>Internal Network</label>
                         <input v-model="intNetwork" type="text">
                     </div>
+                    <div class="field">
+                        <label>Security Group</label>
+                        <input v-model="securityGroup" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Credentials</label>
+                        <select class="form-control" @change="changeCred($event)">
+                            <option value="" selected disabled>Credentials</option>
+                            <option v-for="cred in this.osCreds" :value="cred.id" :key="cred.id">{{ cred.name }} ({{cred.id}})</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="field">
-                    <label>Security Group</label>
-                    <input v-model="securityGroup" type="text">
-                </div>
-                <select class="form-control" @change="changeCred($event)">
-                    <option value="" selected disabled>Credentials</option>
-                    <option v-for="cred in this.osCreds" :value="cred.id" :key="cred.id">{{ cred.name }} ({{cred.id}})</option>
-                </select>
-                <br><br>
-                <div class="ui basic green button" v-on:click="createSpace">Add</div>
             </div>
-            <div align="center" justify="center" v-if="loading">
-                <RingLoader size="120px"></RingLoader>
-            </div>
+        </div>
+        <div class="ui blue bottom attached button"  v-if="!loading" v-on:click="createSpace">Add</div>
+        <div align="center" justify="center" v-if="loading">
+            <RingLoader size="120px"></RingLoader>
         </div>
     </div>
 </template>

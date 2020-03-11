@@ -3,8 +3,8 @@
         <div class="content" style="alignment: left">
             <div class="header">AWS Space</div>
             <div class="meta"> Create a Space on your AWS account</div>
-            <div v-if="!loading" class="ui form">
-                <div class="fields">
+            <div class="ui form">
+                <div class="two wide fields">
                     <div class="field">
                         <label>Name</label>
                         <input v-model="name" type="text">
@@ -14,16 +14,18 @@
                         <input v-model="password" type="password">
                     </div>
                 </div>
-                <select class="form-control" @change="changeCred($event)">
-                    <option value="" selected disabled>Credentials</option>
-                    <option v-for="cred in this.awsCreds" :value="cred.id" :key="cred.id">{{ cred.name }} ({{cred.id}})</option>
-                </select>
-                <br><br>
-                <div class="ui basic green button" v-on:click="createSpace">Add</div>
+                <div class="field">
+                    <label>Credentials</label>
+                    <select class="form-control" @change="changeCred($event)">
+                        <option value="" selected disabled>Credentials</option>
+                        <option v-for="cred in this.awsCreds" :value="cred.id" :key="cred.id">{{ cred.name }} ({{cred.id}})</option>
+                    </select>
+                </div>
             </div>
-            <div align="center" justify="center" v-if="loading">
-                <RingLoader size="120px"></RingLoader>
-            </div>
+        </div>
+        <div class="ui blue bottom attached button"  v-if="!loading" v-on:click="createSpace">Add</div>
+        <div align="center" justify="center" v-if="loading">
+            <RingLoader size="120px"></RingLoader>
         </div>
     </div>
 </template>

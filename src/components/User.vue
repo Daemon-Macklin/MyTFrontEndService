@@ -33,14 +33,15 @@
                 <div class="header">
                     <h3 class="ui dividing header">Keys</h3>
                 </div>
+                <br>
                 <div class="meta"> Get the public and private key we generated for you</div>
-                    <div class="ui form">
-                        <div class="inline field">
-                            <label>Password</label>
-                            <input v-model="key_password" type="password">
-                        </div>
-                        <div class="ui basic green button" v-on:click="getKey">Get </div>
+                <br>
+                <div class="content">
+                    <div class="ui action input">
+                        <input v-model="key_password" placeholder="Password" type="password">
+                        <button class="ui blue button" v-on:click="getKey">Get</button>
                     </div>
+                </div>
             </div>
         </div>
     </div>
