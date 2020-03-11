@@ -25,6 +25,10 @@ export default {
         return Api().post('credentials/create/os', data,
             {headers: {'Authorization': 'Bearer '+token}})
     },
+    createGCPCreds(data, token){
+        return Api().post('credentials/create/gcp', data,
+            {headers: {'Authorization': 'Bearer '+token}})
+    },
     getCreds(uid, token){
        return Api().get('credentials/get/'+uid,
            {headers: {'Authorization': 'Bearer '+token}})

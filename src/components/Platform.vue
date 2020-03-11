@@ -220,6 +220,7 @@
                         data["flavorName"] = this.flavorName
                         data["imageName"] = this.imageName
                     }
+
                     let formData = new FormData();
 
                     for (let prop in data) {
