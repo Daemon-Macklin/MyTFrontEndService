@@ -213,7 +213,7 @@
                     };
 
                     let data = {
-                        "platformName" : this.name.toLowerCase(),
+                        "platformName" : this.name.toLowerCase().replace(/\s+/g, ''),
                         "cloudService" : cloudServices[this.selectedCS],
                         "uid" : this.user.uid,
                         "password": this.password,
@@ -226,8 +226,8 @@
                     };
 
                     if (this.rabbitMQuserPass) {
-                        data["rabbitUser"] = this.rabbitUsername;
-                        data["rabbitPass"] = this.rabbitPassword
+                        data["rabbitUser"] = this.rabbitUsername.replace(/\s+/g, '')
+                        data["rabbitPass"] = this.rabbitPassword.replace(/\s+/g, '')
                     }
 
                     if(this.selectedCS === "Openstack"){

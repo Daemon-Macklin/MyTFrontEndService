@@ -134,9 +134,9 @@
                 }
 
                 let json = {
-                    email: res.reg_email,
-                    password: res.reg_password,
-                    userName: res.reg_username
+                    email: res.reg_email.replace(/\s+/g, ''),
+                    password: res.reg_password.replace(/\s+/g, ''),
+                    userName: res.reg_username.replace(/\s+/g, '')
                 };
 
                 mytservice.register(json).then(
