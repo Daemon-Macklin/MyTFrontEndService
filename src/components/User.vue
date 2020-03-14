@@ -81,6 +81,7 @@
                             } catch (e) {
                                 console.log(e)
                             }
+                            this.key_password = null
                         }
                     ).catch(
                         error => {
