@@ -87,7 +87,11 @@
                     </select>
                 </div>
             </div>
-            <div class="two wide fields">
+            <div class="three wide fields">
+                <div class="field">
+                    <label>Data Processing Template</label>
+                    <div class="ui blue button" v-if="!loading" v-on:click="downloadTemplate">Download Template</div>
+                </div>
                 <div class="field">
                     <label> Data Processing Script </label>
                     <input type="file" id="embedpollfileinput" @change="fileEvent($event)"/>
@@ -619,6 +623,41 @@
                     });
                     console.log(this.packages)
                 }
+            },
+            downloadTemplate(){
+                let token = this.$cookies.get("access_token");
+                mytservice.downloadTemplate(token).then(
+                    response => {
+                        console.log(response);
+                        this.flashMessage.success({title: 'Template Received', message: "Put your custom code here"});
+                        let blob = new Blob([(response.data)])
+                        try {
+                            saveAs(blob, "dataProcessing.py")
+                        } catch (e) {
+                            console.log(e)
+                        }
+                    }
+                ).catch(
+                    error => {
+                        console.log(error);
+                        if (error.response.status === 401) {
+                            this.flashMessage.error({title: 'Error', message: error.response.data.msg});
+                            this.$parent.$parent.isSignedIn()
+                        } else if (error.response.status === 400) {
+                            try {
+                                this.flashMessage.error({
+                                    title: 'Error',
+                                    message: error.response.data.errors.message
+                                });
+                            } catch (e) {
+                                this.flashMessage.error({
+                                    title: 'Error',
+                                    message: "Error Getting Dump"
+                                });
+                            }
+                        }
+                    }
+                )
             },
             clearFields() {
                 this.name = null

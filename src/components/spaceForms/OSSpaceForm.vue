@@ -47,7 +47,7 @@
         </div>
         <div class="ui blue bottom attached button"  v-if="!loading" v-on:click="createSpace">Add</div>
         <div align="center" justify="center" v-if="loading">
-            <RingLoader size="120px"></RingLoader>
+            <RingLoader size="40px"></RingLoader>
         </div>
     </div>
 </template>
