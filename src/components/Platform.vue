@@ -13,7 +13,7 @@
                     <input v-model="password" type="password">
                 </div>
             </div>
-            <div class="three wide fields">
+            <div class="four wide fields">
                 <div class="field">
                     <label>Cloud Service</label>
                     <select class="form-control" @change="changeCS($event)">
@@ -37,6 +37,13 @@
                     <select class="form-control" @change="changeDB($event)">
                         <option value="" selected disabled>Database</option>
                         <option v-for="database in this.databases" :value="database" :key="database">{{ database }}</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>DataBase Size</label>
+                    <select class="form-control" @change="changeDBSize($event)">
+                        <option value="" selected disabled>Database Size</option>
+                        <option v-for="size in this.dbSizes" :value="size" :key="size">{{ size }}</option>
                     </select>
                 </div>
             </div>
@@ -172,7 +179,10 @@
                 databases: ["InfluxDB", "MongoDB", "MySQL", "TimeScale"],
                 cloudServices: ["Amazon Web Services", "Openstack", "Google Cloud"],
                 monitoringFreq: [2, 5, 10, 20, 30, 60],
+                dbSizes: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
                 spaces: [],
+                awsSpaces: [],
+                osSpaces: [],
                 creds: [],
                 rabbitMQuserPass: true,
                 rabbitUsername: null,
@@ -180,6 +190,7 @@
                 rabbitTLS: false,
                 selectedCS: null,
                 selectedDB: null,
+                selectedDBSize: null,
                 selectedSpace: null,
                 selectedCred: null,
                 zone: null,
@@ -223,6 +234,7 @@
                         "password": this.password,
                         "sid" : this.selectedSpace,
                         "database": this.selectedDB.toLowerCase(),
+                        "dbsize" : this.selectedDBSize,
                         "packages": this.packages,
                         "rabbitTLS": this.rabbitTLS.toString(),
                         "monitoring" : this.monitoring,
@@ -384,9 +396,20 @@
             },
             changeCS (event) {
                 this.selectedCS = event.target.options[event.target.options.selectedIndex].text
+                console.log(this.selectedCS)
+                if(this.selectedCS === "Openstack"){
+                    this.spaces = this.osSpaces
+                } else {
+                    this.spaces = this.awsSpaces
+                }
+                console.log(this.spaces)
+                console.log(this.awsSpaces)
             },
             changeDB (event) {
                 this.selectedDB = event.target.options[event.target.options.selectedIndex].text
+            },
+            changeDBSize (event) {
+                this.selectedDBSize = event.target.options[event.target.options.selectedIndex].text
             },
             changeFreq (event) {
                 this.selectedFreq = event.target.options[event.target.options.selectedIndex].text
@@ -404,7 +427,20 @@
                 let token = this.$cookies.get("access_token");
                 mytservice.getSpaces(this.user.uid, token).then(
                     response => {
-                        this.spaces = response.data.spaces
+                        let awsSpaces = []
+                        for (let key in response.data.spaces) {
+                            if(response.data.spaces[key].type === "AWS"){
+                                awsSpaces.push(response.data.spaces[key])
+                            }
+                        }
+                        this.awsSpaces = awsSpaces
+                        let osSpaces = []
+                        for (let key in response.data.spaces) {
+                            if(response.data.spaces[key].type === "Openstack"){
+                                osSpaces.push(response.data.spaces[key])
+                            }
+                        }
+                        this.osSpaces = osSpaces
                     }
                 ).catch(
                     error => {
