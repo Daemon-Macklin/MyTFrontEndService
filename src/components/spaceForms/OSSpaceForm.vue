@@ -3,7 +3,7 @@
         <div class="content" style="alignment: left">
             <div class="header">Openstack Space</div>
             <div class="meta">Save a network configuration for Openstack Platforms</div>
-            <div v-if="!loading" class="ui form">
+            <div class="ui form">
                 <div class="four wide fields">
                     <div class="field">
                         <label>Name</label>
@@ -14,7 +14,7 @@
                         <input v-model="password" type="password">
                     </div>
                     <div class="field">
-                        <label>Tenant Network</label>
+                        <label>Tenant Name</label>
                         <input v-model="tenantName" type="text">
                     </div>
                     <div class="field">

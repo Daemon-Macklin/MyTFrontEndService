@@ -21,12 +21,15 @@
                         <option v-for="cloudService in cloudServices" :value="cloudService" :key="cloudService">{{ cloudService }}</option>
                     </select>
                 </div>
-                <div class="field">
+                <div class="field" v-if="selectedCS!=='Google Cloud'">
                     <label>Space</label>
                     <select v-if="selectedCS!=='Google Cloud'" class="form-control" @change="changeSpace($event)">
                         <option value="" selected disabled>Space</option>
                         <option v-for="space in spaces" :value="space.id" :key="space.id">{{ space.name }} ({{space.id}})</option>
                     </select>
+                </div>
+                <div class="field" v-if="selectedCS==='Google Cloud'">
+                    <label>Credentials</label>
                     <select v-if="selectedCS==='Google Cloud'" class="form-control" @change="changeCred($event)">
                         <option value="" selected disabled>Credentials</option>
                         <option v-for="cred in creds" :value="cred.id" :key="cred.id">{{ cred.name }} ({{cred.id}})</option>
