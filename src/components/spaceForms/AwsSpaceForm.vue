@@ -14,12 +14,18 @@
                         <input v-model="password" type="password">
                     </div>
                 </div>
-                <div class="field">
-                    <label>Credentials</label>
-                    <select class="form-control" @change="changeCred($event)">
-                        <option value="" selected disabled>Credentials</option>
-                        <option v-for="cred in this.awsCreds" :value="cred.id" :key="cred.id">{{ cred.name }} ({{cred.id}})</option>
-                    </select>
+                <div class="two wide fields">
+                    <div class="field">
+                        <label>Availability Zone</label>
+                        <input v-model="availabilityZone" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Credentials</label>
+                        <select class="form-control" @change="changeCred($event)">
+                            <option value="" selected disabled>Credentials</option>
+                            <option v-for="cred in this.awsCreds" :value="cred.id" :key="cred.id">{{ cred.name }} ({{cred.id}})</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -47,6 +53,7 @@
             return {
                 name: null,
                 password: null,
+                availabilityZone: null,
                 selectedCred: null,
                 loading: false,
                 color: "red",
@@ -62,6 +69,7 @@
                         "uid" : this.user.uid,
                         "cid" : this.selectedCred,
                         "password" : this.password,
+                        "availability_zone" : this.availabilityZone,
                         "spaceName" : this.name
                     }
                     let token = this.$cookies.get("access_token")
