@@ -2,7 +2,10 @@
     <div id="app">
             <login-form :data="loginFormData" @sign-in="signIn"/>
             <br>
-            <login-form :data="registerFormData" @sign-in="register"/>
+            <login-form :data="registerFormData" @sign-in="register">
+                <br>
+                <i class="fa fa-info-circle fa-lg" aria-hidden="true"  v-b-popover.hover.top="'Passwords must be at least 7 characters long, contain at least 1 number and 1 symbol'" title="Password Specifications"></i>
+            </login-form>
     </div>
 </template>
 
@@ -120,10 +123,20 @@
                     this.flashMessage.error({title: 'Register Error', message: "All Fields must be filled"});
                     return
                 }
+
+                let passwordRegex = new RegExp("^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{7,})")
+
+                if(passwordRegex.test(res.reg_password)) {
+                    console.log("Valid Password")
+                } else{
+                    this.flashMessage.error({title: 'Password Error', message: "Password must match Password Specifications"});
+                    return
+                }
+
                 let json = {
-                    email: res.reg_email,
-                    password: res.reg_password,
-                    userName: res.reg_username
+                    email: res.reg_email.replace(/\s+/g, ''),
+                    password: res.reg_password.replace(/\s+/g, ''),
+                    userName: res.reg_username.replace(/\s+/g, '')
                 };
 
                 mytservice.register(json).then(

@@ -21,6 +21,14 @@ export default {
       return Api().post('credentials/create/aws', data,
           {headers: {'Authorization': 'Bearer '+token}})
     },
+    createOSCreds(data, token){
+        return Api().post('credentials/create/os', data,
+            {headers: {'Authorization': 'Bearer '+token}})
+    },
+    createGCPCreds(data, token){
+        return Api().post('credentials/create/gcp', data,
+            {headers: {'Authorization': 'Bearer '+token}})
+    },
     getCreds(uid, token){
        return Api().get('credentials/get/'+uid,
            {headers: {'Authorization': 'Bearer '+token}})
@@ -29,8 +37,12 @@ export default {
         return Api().delete('credentials/remove/'+ type +'/' + id,
             {headers: {'Authorization': 'Bearer '+token}})
     },
-    createSpace(data, token){
-        return Api().post('spaces/create', data,
+    createAWSSpace(data, token){
+        return Api().post('spaces/create/aws', data,
+            {headers: {'Authorization': 'Bearer '+token}})
+    },
+    createOSSpace(data, token){
+        return Api().post('spaces/create/os', data,
             {headers: {'Authorization': 'Bearer '+token}})
     },
     getSpaces(uid, token){
@@ -39,6 +51,10 @@ export default {
     },
     removeAWSSpaces(data, id, token){
         return Api().post('space/remove/aws/'+id, data,
+            {headers: {'Authorization': 'Bearer '+token}})
+    },
+    removeOSSpaces(data, id, token){
+        return Api().post('space/remove/os/'+id, data,
             {headers: {'Authorization': 'Bearer '+token}})
     },
     createPlatform(data, token) {
@@ -64,5 +80,9 @@ export default {
     generateDump(data, id, token){
         return Api().post('platforms/database/dump/'+id, data,
             {headers: {'Authorization': 'Bearer '+token}, responseType: 'blob'})
+    },
+    downloadTemplate(token){
+        return Api().get('/platforms/dataProcessingFile',
+            {headers: {'Authorization': 'Bearer '+token}})
     }
 }

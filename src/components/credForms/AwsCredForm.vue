@@ -1,10 +1,10 @@
 <template>
         <div class="ui raised card">
-            <div class="content" style="alignment: left">
+            <div class="content">
                 <div class="header">AWS Credentials</div>
                 <div class="meta"> Create credentials for your AWS account</div>
                 <div class="ui form">
-                    <div class="fields">
+                    <div class="two wide fields">
                         <div class="field">
                             <label>Name</label>
                             <input v-model="name" type="text">
@@ -22,9 +22,9 @@
                         <label>Secret Key</label>
                         <input v-model="secretKey" type="text">
                     </div>
-                    <div class="ui basic green button" v-on:click="createCreds">Add</div>
                 </div>
             </div>
+            <div class="ui blue bottom attached button" v-on:click="createCreds">Add</div>
         </div>
 </template>
 

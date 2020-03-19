@@ -13,7 +13,7 @@
                     <input v-model="password" type="password">
                 </div>
             </div>
-            <div class="three wide fields">
+            <div class="four wide fields">
                 <div class="field">
                     <label>Cloud Service</label>
                     <select class="form-control" @change="changeCS($event)">
@@ -21,11 +21,18 @@
                         <option v-for="cloudService in cloudServices" :value="cloudService" :key="cloudService">{{ cloudService }}</option>
                     </select>
                 </div>
-                <div class="field">
+                <div class="field" v-if="selectedCS!=='Google Cloud'">
                     <label>Space</label>
-                    <select class="form-control" @change="changeSpace($event)">
+                    <select v-if="selectedCS!=='Google Cloud'" class="form-control" @change="changeSpace($event)">
                         <option value="" selected disabled>Space</option>
                         <option v-for="space in spaces" :value="space.id" :key="space.id">{{ space.name }} ({{space.id}})</option>
+                    </select>
+                </div>
+                <div class="field" v-if="selectedCS==='Google Cloud'">
+                    <label>Credentials</label>
+                    <select v-if="selectedCS==='Google Cloud'" class="form-control" @change="changeCred($event)">
+                        <option value="" selected disabled>Credentials</option>
+                        <option v-for="cred in creds" :value="cred.id" :key="cred.id">{{ cred.name }} ({{cred.id}})</option>
                     </select>
                 </div>
                 <div class="field">
@@ -34,6 +41,29 @@
                         <option value="" selected disabled>Database</option>
                         <option v-for="database in this.databases" :value="database" :key="database">{{ database }}</option>
                     </select>
+                </div>
+                <div class="field">
+                    <label>DataBase Size</label>
+                    <select class="form-control" @change="changeDBSize($event)">
+                        <option value="" selected disabled>Database Size</option>
+                        <option v-for="size in this.dbSizes" :value="size" :key="size">{{ size }}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="two wide fields" v-if="selectedCS==='Openstack'">
+                <div class="field">
+                    <label>Flavor Name</label>
+                    <input v-model="flavorName" type="text">
+                </div>
+                <div class="field">
+                    <label>Image Name</label>
+                    <input v-model="imageName" type="text">
+                </div>
+            </div>
+            <div class="two wide fields" v-if="selectedCS==='Google Cloud'">
+                <div class="field">
+                    <label>Availability Zone</label>
+                    <input v-model="zone" type="text">
                 </div>
             </div>
             <div class="four wide fields">
@@ -56,19 +86,6 @@
             </div>
             <div class="two wide fields">
                 <div class="field">
-                    <label> Data Processing Script </label>
-                    <input type="file" id="embedpollfileinput" @change="fileEvent($event)"/>
-                </div>
-                <div class="field">
-                    <label> Required Packages</label>
-                    <div class="ui action input">
-                        <input type="text" v-model="packageInput" placeholder="Package Name...">
-                        <button class="ui button" v-on:click="addPackage">Add</button>
-                    </div>
-                </div>
-            </div>
-            <div class="two wide fields">
-                <div class="field">
                     <label> Monitoring Enabled </label>
                     <b-form-checkbox v-model="monitoring" name="check-button" switch size="lg"></b-form-checkbox>
                 </div>
@@ -78,6 +95,23 @@
                         <option value="" selected disabled>Freq(mins)</option>
                         <option v-for="freq in this.monitoringFreq" :value="freq" :key="freq">{{ freq }}</option>
                     </select>
+                </div>
+            </div>
+            <div class="three wide fields">
+                <div class="field">
+                    <label>Data Processing Template</label>
+                    <div class="ui blue button" v-if="!loading" v-on:click="downloadTemplate">Download Template</div>
+                </div>
+                <div class="field">
+                    <label> Data Processing Script </label>
+                    <input type="file" id="embedpollfileinput" @change="fileEvent($event)"/>
+                </div>
+                <div class="field">
+                    <label> Required Packages</label>
+                    <div class="ui action input">
+                        <input type="text" v-model="packageInput" placeholder="Package Name...">
+                        <button class="ui blue button" v-on:click="addPackage">Add</button>
+                    </div>
                 </div>
             </div>
             <h4 class="ui horizontal divider header">Packages</h4>
@@ -95,7 +129,7 @@
             </div>
             <h4 class="ui horizontal divider header">Ready?</h4>
             <br>
-            <div class="ui basic green button" v-if="!loading" v-on:click="createPlatform">Add</div>
+            <div class="ui blue button" v-if="!loading" v-on:click="createPlatform">Add</div>
             <div align="center" justify="center" v-if="loading">
                 <RingLoader size="60px"></RingLoader>
             </div>
@@ -135,6 +169,7 @@
         },
         created() {
             this.getSpaces();
+            this.getCreds()
             this.getPlatforms()
         },
         data() {
@@ -147,19 +182,28 @@
                 databases: ["InfluxDB", "MongoDB", "MySQL", "TimeScale"],
                 cloudServices: ["Amazon Web Services", "Openstack", "Google Cloud"],
                 monitoringFreq: [2, 5, 10, 20, 30, 60],
+                dbSizes: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
                 spaces: [],
+                awsSpaces: [],
+                osSpaces: [],
+                creds: [],
                 rabbitMQuserPass: true,
                 rabbitUsername: null,
                 rabbitPassword: null,
                 rabbitTLS: false,
                 selectedCS: null,
                 selectedDB: null,
+                selectedDBSize: null,
                 selectedSpace: null,
+                selectedCred: null,
+                zone: null,
                 monitoring: false,
                 selectedFreq: null,
                 columns: ['name', 'cloudService', 'ip' ,'id'],
                 platforms: [],
                 dataProcessingScript: null,
+                imageName: null,
+                flavorName: null,
                 options: {
                     headings: {
                         name: 'Title',
@@ -187,12 +231,13 @@
                     };
 
                     let data = {
-                        "platformName" : this.name,
+                        "platformName" : this.name.toLowerCase().replace(/\s+/g, ''),
                         "cloudService" : cloudServices[this.selectedCS],
                         "uid" : this.user.uid,
                         "password": this.password,
                         "sid" : this.selectedSpace,
                         "database": this.selectedDB.toLowerCase(),
+                        "dbsize" : this.selectedDBSize,
                         "packages": this.packages,
                         "rabbitTLS": this.rabbitTLS.toString(),
                         "monitoring" : this.monitoring,
@@ -200,8 +245,18 @@
                     };
 
                     if (this.rabbitMQuserPass) {
-                        data["rabbitUser"] = this.rabbitUsername;
-                        data["rabbitPass"] = this.rabbitPassword
+                        data["rabbitUser"] = this.rabbitUsername.replace(/\s+/g, '')
+                        data["rabbitPass"] = this.rabbitPassword.replace(/\s+/g, '')
+                    }
+
+                    if(this.selectedCS === "Openstack"){
+                        data["flavorName"] = this.flavorName
+                        data["imageName"] = this.imageName
+                    }
+
+                    if(this.selectedCS === "Google Cloud"){
+                        data["zone"] = this.zone
+                        data["cid"] = this.selectedCred
                     }
 
                     let formData = new FormData();
@@ -344,9 +399,20 @@
             },
             changeCS (event) {
                 this.selectedCS = event.target.options[event.target.options.selectedIndex].text
+                console.log(this.selectedCS)
+                if(this.selectedCS === "Openstack"){
+                    this.spaces = this.osSpaces
+                } else {
+                    this.spaces = this.awsSpaces
+                }
+                console.log(this.spaces)
+                console.log(this.awsSpaces)
             },
             changeDB (event) {
                 this.selectedDB = event.target.options[event.target.options.selectedIndex].text
+            },
+            changeDBSize (event) {
+                this.selectedDBSize = event.target.options[event.target.options.selectedIndex].text
             },
             changeFreq (event) {
                 this.selectedFreq = event.target.options[event.target.options.selectedIndex].text
@@ -356,11 +422,28 @@
                 let selectedSpaceText = event.target.options[event.target.options.selectedIndex].text;
                 this.selectedSpace = selectedSpaceText.match(/\(([^)]+)\)/)[1]
             },
+            changeCred (event) {
+                let selectedCredText = event.target.options[event.target.options.selectedIndex].text
+                this.selectedCred = selectedCredText.match(/\(([^)]+)\)/)[1]
+            },
             getSpaces(){
                 let token = this.$cookies.get("access_token");
                 mytservice.getSpaces(this.user.uid, token).then(
                     response => {
-                        this.spaces = response.data.spaces
+                        let awsSpaces = []
+                        for (let key in response.data.spaces) {
+                            if(response.data.spaces[key].type === "AWS"){
+                                awsSpaces.push(response.data.spaces[key])
+                            }
+                        }
+                        this.awsSpaces = awsSpaces
+                        let osSpaces = []
+                        for (let key in response.data.spaces) {
+                            if(response.data.spaces[key].type === "Openstack"){
+                                osSpaces.push(response.data.spaces[key])
+                            }
+                        }
+                        this.osSpaces = osSpaces
                     }
                 ).catch(
                     error => {
@@ -386,6 +469,28 @@
                             this.flashMessage.error({title: 'Auth Error', message: "Token Has Expired"});
                             this.$parent.$parent.isSignedIn();
                             console.log("Done from platform")
+                        } else
+                            this.flashMessage.error({title: 'Error', message: "Error Getting Spaces"});
+                    }
+                )
+            },
+            getCreds(){
+                let token = this.$cookies.get("access_token")
+                mytservice.getCreds(this.user.uid, token).then(
+                    response => {
+                        let gcpCreds = []
+                        for (let key in response.data.creds) {
+                            if (response.data.creds[key].type === "GCP") {
+                                gcpCreds.push(response.data.creds[key])
+                            }
+                        }
+                        this.creds = gcpCreds
+                    }
+                    ).catch(
+                    error => {
+                        if(error.response.data.msg === "Token has expired"){
+                            this.flashMessage.error({title: 'Auth Error', message: "Token Has Expired"})
+                            this.$parent.$parent.isSignedIn()
                         } else
                             this.flashMessage.error({title: 'Error', message: "Error Getting Spaces"});
                     }
@@ -557,6 +662,41 @@
                     });
                     console.log(this.packages)
                 }
+            },
+            downloadTemplate(){
+                let token = this.$cookies.get("access_token");
+                mytservice.downloadTemplate(token).then(
+                    response => {
+                        console.log(response);
+                        this.flashMessage.success({title: 'Template Received', message: "Put your custom code here"});
+                        let blob = new Blob([(response.data)])
+                        try {
+                            saveAs(blob, "dataProcessing.py")
+                        } catch (e) {
+                            console.log(e)
+                        }
+                    }
+                ).catch(
+                    error => {
+                        console.log(error);
+                        if (error.response.status === 401) {
+                            this.flashMessage.error({title: 'Error', message: error.response.data.msg});
+                            this.$parent.$parent.isSignedIn()
+                        } else if (error.response.status === 400) {
+                            try {
+                                this.flashMessage.error({
+                                    title: 'Error',
+                                    message: error.response.data.errors.message
+                                });
+                            } catch (e) {
+                                this.flashMessage.error({
+                                    title: 'Error',
+                                    message: "Error Getting Dump"
+                                });
+                            }
+                        }
+                    }
+                )
             },
             clearFields() {
                 this.name = null
