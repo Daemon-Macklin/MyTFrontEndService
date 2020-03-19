@@ -6,18 +6,12 @@
           <img src="./assets/logoNav.png" alt="Img">
           MyT
         </b-navbar-brand>
-
-        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-
-        <b-collapse id="nav-collapse" is-nav>
-
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
             <b-navbar-nav>
               <b-nav-item v-on:click="logout">Logout</b-nav-item>
             </b-navbar-nav>
           </b-navbar-nav>
-        </b-collapse>
       </b-navbar>
   </div>
     <Login v-if="signedIn === false"/>

@@ -12,12 +12,12 @@
     "bootstrap-vue": "^2.4.2",
     "core-js": "^3.6.4",
     "pretty-checkbox-vue": "^1.1.9",
+    "sweetalert2": "latest",
     "vue": "^2.6.11",
     "vue-cookies": "^1.6.1",
     "vue-form": "^4.10.3",
     "vue-simple-alert": "^1.1.1",
-    "vue-tables-2": "^2.0.0",
-    "sweetalert2": "latest"
+    "vue-tables-2": "^2.0.0"
   },
   "devDependencies": {
     "@smartweb/vue-flash-message": "^0.6.2",

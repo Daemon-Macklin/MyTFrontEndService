@@ -1,6 +1,10 @@
 <template>
     <div>
-        <AwsForm v-bind:user="user" />
+        <div class="ui three wide cards">
+            <AwsForm v-bind:user="user" />
+            <OSCredForm v-bind:user="user" />
+            <GCPCredForm v-bind:user="user" />
+        </div>
         <br>
         <v-client-table :columns="columns" :data="creds" :options="options">
             <template slot="id" slot-scope="props">
@@ -12,14 +16,16 @@
 
 <script>
     import Vue from 'vue'
-    import AwsForm from "./credForms/AwsForm";
+    import AwsForm from "./credForms/AwsCredForm";
+    import OSCredForm from "./credForms/OSCredForm"
+    import GCPCredForm from "./credForms/GCPCredForm";
     import VueTables from 'vue-tables-2'
     import mytservice from "../services/mytservice";
     Vue.use(VueTables.ClientTable, {compileTemplates: true, filterByColumn: true})
 
     export default {
         name: "Credentials",
-        components: {AwsForm},
+        components: {AwsForm, OSCredForm, GCPCredForm},
         created() {
             this.getCreds()
             },
