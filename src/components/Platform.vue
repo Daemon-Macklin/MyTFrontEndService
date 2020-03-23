@@ -742,12 +742,8 @@
                 this.rabbitUsername = null
                 this.rabbitPassword = null
                 this.rabbitTLS = null
-                this.selectedCS = null
-                this.selectedDB = null
-                this.selectedSpace = null
                 this.monitoring = false
                 this.selectedFreq = null
-                this.dataProcessingScript = null
             }
         }
     }

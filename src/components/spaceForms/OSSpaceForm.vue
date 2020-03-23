@@ -110,7 +110,6 @@
                             this.loading=false
                             if (error.response.status === 401) {
                                 this.flashMessage.error({title: 'Error', message: error.response.data.msg});
-                                this.$parent.$parent.isSignedIn()
                             }
                             else if(error.response.status === 400){
                                 this.flashMessage.error({title: 'Error', message: error.response.data.errors.message});
@@ -129,7 +128,6 @@
                 this.tenantNetwork = null
                 this.availabilityZone = null
                 this.ipPool = null
-                this.selectedCred = null
             }
         }
     }
