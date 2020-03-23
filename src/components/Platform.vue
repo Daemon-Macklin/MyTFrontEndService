@@ -66,6 +66,25 @@
                     <input v-model="zone" type="text">
                 </div>
             </div>
+            <div  v-if="selectedDB==='MySQLDB' || selectedDB === 'TimeScaleDB'">
+                <div class="two wide fields">
+                    <div class="field">
+                        <label>Field Name</label>
+                        <input v-model="fieldname" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Field Type</label>
+                        <select class="form-control" @change="changeFieldType($event)">
+                            <option value="" selected disabled>Database Size</option>
+                            <option v-for="type in this.fieldTypes" :value="type" :key="type">{{ type }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="ui blue button" v-on:click="addField">Add</div>
+                <br>
+                {{this.dbFields}}
+                <br>
+            </div>
             <div class="four wide fields">
                 <div class="field">
                     <label>RabbitMQ Username/Password</label>
@@ -179,7 +198,7 @@
                 name: null,
                 password: null,
                 packages: [],
-                databases: ["InfluxDB", "MongoDB", "MySQL", "TimeScale"],
+                databases: ["InfluxDB", "MongoDB", "MySQLDB", "TimeScaleDB"],
                 cloudServices: ["Amazon Web Services", "Openstack", "Google Cloud"],
                 monitoringFreq: [2, 5, 10, 20, 30, 60],
                 dbSizes: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
@@ -204,6 +223,10 @@
                 dataProcessingScript: null,
                 imageName: null,
                 flavorName: null,
+                dbFields: {},
+                fieldTypes: ["int", "varchar"],
+                fieldname: null,
+                fieldType: null,
                 options: {
                     headings: {
                         name: 'Title',
@@ -257,6 +280,10 @@
                     if(this.selectedCS === "Google Cloud"){
                         data["zone"] = this.zone
                         data["cid"] = this.selectedCred
+                    }
+
+                    if(this.selectedDB === "MySQLDB" || this.selectedDB === "TimeScaleDB"){
+                        data["dbFields"] = JSON.stringify(this.dbFields)
                     }
 
                     let formData = new FormData();
@@ -417,6 +444,10 @@
             changeFreq (event) {
                 this.selectedFreq = event.target.options[event.target.options.selectedIndex].text
                 console.log(this.selectedFreq)
+            },
+            changeFieldType (event) {
+                this.fieldType = event.target.options[event.target.options.selectedIndex].text
+                console.log(this.fieldType)
             },
             changeSpace (event) {
                 let selectedSpaceText = event.target.options[event.target.options.selectedIndex].text;
@@ -697,6 +728,11 @@
                         }
                     }
                 )
+            },
+            addField(){
+                this.dbFields[this.fieldname] = this.fieldType
+                this.fieldname = null
+                console.log(JSON.stringify(this.dbFields))
             },
             clearFields() {
                 this.name = null
