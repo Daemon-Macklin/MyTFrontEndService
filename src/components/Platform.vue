@@ -75,14 +75,26 @@
                     <div class="field">
                         <label>Field Type</label>
                         <select class="form-control" @change="changeFieldType($event)">
-                            <option value="" selected disabled>Database Size</option>
+                            <option value="" selected disabled>Type</option>
                             <option v-for="type in this.fieldTypes" :value="type" :key="type">{{ type }}</option>
                         </select>
                     </div>
                 </div>
                 <div class="ui blue button" v-on:click="addField">Add</div>
                 <br>
-                {{this.dbFields}}
+                <br>
+                    <div class="ui centered stackable equal width grid">
+                        <div class="four wide column" v-for="item in this.dispDBFields" :key="item.name">
+                            <div class="ui card">
+                                <div class="content">
+                                    <div class="header">
+                                        {{item.name}}: {{item.type}}
+                                        <i class="fa fa-trash-o" style="padding: 5px" v-on:click="removeField(item.name)"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 <br>
             </div>
             <div class="four wide fields">
@@ -227,6 +239,7 @@
                 fieldTypes: ["int", "varchar"],
                 fieldname: null,
                 fieldType: null,
+                dispDBFields: [],
                 options: {
                     headings: {
                         name: 'Title',
@@ -694,6 +707,16 @@
                     console.log(this.packages)
                 }
             },
+            removeField(item){
+                Vue.delete(this.dbFields, item)
+                for(let dispItem in this.dispDBFields){
+                    if(this.dispDBFields[dispItem].name === item){
+                        this.dispDBFields = this.dispDBFields.filter(function(value){
+                            return value.name !== item;
+                        });
+                    }
+                }
+            },
             downloadTemplate(){
                 let token = this.$cookies.get("access_token");
                 mytservice.downloadTemplate(token).then(
@@ -731,8 +754,22 @@
             },
             addField(){
                 this.dbFields[this.fieldname] = this.fieldType
-                this.fieldname = null
                 console.log(JSON.stringify(this.dbFields))
+
+                let data = {
+                    "name" : this.fieldname,
+                    "type" : this.fieldType
+                }
+                this.fieldname = null
+                for(let item in this.dispDBFields){
+                    console.log(data.name)
+                    console.log(this.dispDBFields[item].name)
+                    if(data.name === this.dispDBFields[item].name){
+                        this.dispDBFields[item].type = data.type
+                        return
+                    }
+                }
+                this.dispDBFields.push(data)
             },
             clearFields() {
                 this.name = null
