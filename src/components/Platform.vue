@@ -66,6 +66,37 @@
                     <input v-model="zone" type="text">
                 </div>
             </div>
+            <div  v-if="selectedDB==='MySQLDB' || selectedDB === 'TimeScaleDB'">
+                <div class="two wide fields">
+                    <div class="field">
+                        <label>Field Name</label>
+                        <input v-model="fieldname" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Field Type</label>
+                        <select class="form-control" @change="changeFieldType($event)">
+                            <option value="" selected disabled>Type</option>
+                            <option v-for="type in this.fieldTypes" :value="type" :key="type">{{ type }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="ui blue button" v-on:click="addField">Add</div>
+                <br>
+                <br>
+                    <div class="ui centered stackable equal width grid">
+                        <div class="four wide column" v-for="item in this.dispDBFields" :key="item.name">
+                            <div class="ui card">
+                                <div class="content">
+                                    <div class="header">
+                                        {{item.name}}: {{item.type}}
+                                        <i class="fa fa-trash-o" style="padding: 5px" v-on:click="removeField(item.name)"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <br>
+            </div>
             <div class="four wide fields">
                 <div class="field">
                     <label>RabbitMQ Username/Password</label>
@@ -179,7 +210,7 @@
                 name: null,
                 password: null,
                 packages: [],
-                databases: ["InfluxDB", "MongoDB", "MySQL", "TimeScale"],
+                databases: ["InfluxDB", "MongoDB", "MySQLDB", "TimeScaleDB"],
                 cloudServices: ["Amazon Web Services", "Openstack", "Google Cloud"],
                 monitoringFreq: [2, 5, 10, 20, 30, 60],
                 dbSizes: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
@@ -204,6 +235,11 @@
                 dataProcessingScript: null,
                 imageName: null,
                 flavorName: null,
+                dbFields: {},
+                fieldTypes: ["int", "varchar"],
+                fieldname: null,
+                fieldType: null,
+                dispDBFields: [],
                 options: {
                     headings: {
                         name: 'Title',
@@ -257,6 +293,10 @@
                     if(this.selectedCS === "Google Cloud"){
                         data["zone"] = this.zone
                         data["cid"] = this.selectedCred
+                    }
+
+                    if(this.selectedDB === "MySQLDB" || this.selectedDB === "TimeScaleDB"){
+                        data["dbFields"] = JSON.stringify(this.dbFields)
                     }
 
                     let formData = new FormData();
@@ -417,6 +457,10 @@
             changeFreq (event) {
                 this.selectedFreq = event.target.options[event.target.options.selectedIndex].text
                 console.log(this.selectedFreq)
+            },
+            changeFieldType (event) {
+                this.fieldType = event.target.options[event.target.options.selectedIndex].text
+                console.log(this.fieldType)
             },
             changeSpace (event) {
                 let selectedSpaceText = event.target.options[event.target.options.selectedIndex].text;
@@ -663,6 +707,16 @@
                     console.log(this.packages)
                 }
             },
+            removeField(item){
+                Vue.delete(this.dbFields, item)
+                for(let dispItem in this.dispDBFields){
+                    if(this.dispDBFields[dispItem].name === item){
+                        this.dispDBFields = this.dispDBFields.filter(function(value){
+                            return value.name !== item;
+                        });
+                    }
+                }
+            },
             downloadTemplate(){
                 let token = this.$cookies.get("access_token");
                 mytservice.downloadTemplate(token).then(
@@ -698,6 +752,25 @@
                     }
                 )
             },
+            addField(){
+                this.dbFields[this.fieldname] = this.fieldType
+                console.log(JSON.stringify(this.dbFields))
+
+                let data = {
+                    "name" : this.fieldname,
+                    "type" : this.fieldType
+                }
+                this.fieldname = null
+                for(let item in this.dispDBFields){
+                    console.log(data.name)
+                    console.log(this.dispDBFields[item].name)
+                    if(data.name === this.dispDBFields[item].name){
+                        this.dispDBFields[item].type = data.type
+                        return
+                    }
+                }
+                this.dispDBFields.push(data)
+            },
             clearFields() {
                 this.name = null
                 this.password = null
@@ -706,12 +779,8 @@
                 this.rabbitUsername = null
                 this.rabbitPassword = null
                 this.rabbitTLS = null
-                this.selectedCS = null
-                this.selectedDB = null
-                this.selectedSpace = null
                 this.monitoring = false
                 this.selectedFreq = null
-                this.dataProcessingScript = null
             }
         }
     }
